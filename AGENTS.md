@@ -2,7 +2,8 @@
 
 - Time is limited. Build the fastest working MVP. When choosing between approaches, pick the one that gets the core working end to end soonest.
 - Scope: README.md "Core" is in scope, and "Deferred" is out. Don't build deferred items or prepare hooks for them.
-- The UI is in Polish. Code, specs and docs are in English.
+- The UI is in Polish. Code, specs and docs are in English. Enum values are English too, and their Polish labels (official wording) live in one labels file. Legal identifiers keep their Polish names, e.g. `pesel`, `nip`.
+- Data model: `docs/DATA-MODEL.md`.
 - Read `docs/CONTEXT.md` first: decisions, open questions and handover.
 - Legal and domain facts about the referral form are in `docs/research/`. Rely on them, not on memory.
 - Use OpenSpec (`openspec/`) for changes.

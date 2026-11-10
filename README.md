@@ -51,7 +51,7 @@ The first goal: something that works end to end.
   - Predefined risk factors can't be deleted.
   - Only Telemedi can delete referrals and companies.
   - A deleted employee's referrals stay on the list.
-  - Uniqueness rules (PESEL within a company, user email) ignore deleted records, and deleted accounts can't log in.
+  - A deleted employee's PESEL can be used again. A deleted user's email can't, and the account can't log in.
 - **UI** uses Tailwind and shadcn/ui defaults.
 - **Logging.** Errors go to the console.
 - **Tests.**
@@ -89,3 +89,4 @@ What we deliberately won't build is listed in [docs/SCOPE-CUTS.md](docs/SCOPE-CU
 
 - Can HR operators cancel a referral?
 - Should we limit referrals per employee, for example to one open at a time?
+- Should referrals get a human-readable number, like "SKR/2026/0001"?

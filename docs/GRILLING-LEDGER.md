@@ -75,6 +75,39 @@ The official form isn't a fixed-field form. Each risk-factor category gets a sin
 
 - ✅ **A: Required on the employee: town, street and building number. The flat number is optional.**
 
+### Round 4: how faithful the PDF must be (2026-11-10)
+
+#### Q13: Pixel-perfect or faithful copy
+
+§ 4 ust. 2 of the regulation lists the required content. § 4 ust. 3 points to Annex 3a as the template ("wzór"). Nothing sets the layout, and companies use different-looking versions.
+
+- A: A pixel-perfect copy of the reference.
+- ✅ **B: A faithful copy. The wording, the order of the fields, the footnotes, the categories, the factor count, the signature line and the explanatory notes all match. The look is close (serif font, A4), but positions aren't exact. The visual reference is `docs/research/womp-referral-form.pdf`.**
+
+### Round 5: data model review (2026-11-10)
+
+#### Q14: Language of enum values
+
+- ✅ **A: Values in English, with Polish labels (official wording) in one labels file. `pesel` and `nip` keep their Polish names.**
+- B: Values in Polish.
+- C: All domain names in Polish, including entities and fields.
+
+#### Q15: Reusing a deleted user's email
+
+- ✅ **It can't be reused, because Better Auth keeps a plain unique index on `email`. Only the PESEL uniqueness rule ignores deleted records.**
+
+#### Q16: NIP
+
+- ✅ **Required and checksum-validated.**
+
+#### Q17: Street
+
+- ✅ **Optional, for both companies and employees.**
+
+#### Q18: Human-readable referral number
+
+- ✅ **None for now. It's listed as an open product question in README.**
+
 #### Q7: Demo data
 
 - ✅ **A: The seed adds synthetic demo data: two or three companies with an admin, an operator, employees, templates and referrals in different statuses. Login details are in the README.**

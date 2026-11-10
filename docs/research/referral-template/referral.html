@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Skierowanie na badania lekarskie</title>
+<style>
+  @page { size: A4; margin: 15mm 20mm 14mm 20mm; }
+  * { box-sizing: border-box; }
+  html { font-family: "Tinos", "Liberation Serif", "Times New Roman", serif; font-size: 11.5pt; line-height: 1.25; color: #000; }
+  body { margin: 0; }
+  p { margin: 0; }
+  sup { font-size: 60%; line-height: 0; vertical-align: super; }
+  .cap { display: block; text-align: center; font-size: 9pt; line-height: 1.1; }
+  .strike { text-decoration: line-through; }
+  .sample { }
+  .dots { border-bottom: 1px dotted #000; }
+
+  /* header: employer left, place/date right */
+  .head { display: flex; justify-content: space-between; gap: 20mm; margin-top: 0; }
+  .head > div { width: 46%; }
+  .head .val { min-height: 2.6em; border-bottom: 1px dotted #000; padding: 0 1mm; }
+  .head .val.right { text-align: center; display: flex; align-items: flex-end; justify-content: center; }
+
+  h1 { font-size: 12pt; text-align: center; font-weight: bold; margin: 6mm 0 0; text-transform: uppercase; }
+  .exam { text-align: center; font-weight: bold; margin-bottom: 5mm; }
+  .law { text-align: justify; margin-bottom: 4mm; }
+
+  /* labelled line: label followed by inline value on a dotted baseline */
+  .line { margin-bottom: 2mm; text-align: justify; }
+  .fill { border-bottom: 1px dotted #000; padding: 0 1mm; }
+  .block-fill { text-align: justify; }
+  .after-cap { margin-bottom: 3mm; }
+
+  .conditions { text-align: justify; margin: 3mm 0 4mm; }
+  .cat { display: flex; gap: 4mm; margin-bottom: 4mm; break-inside: avoid-page; }
+  .cat .no { width: 9mm; flex: none; }
+  .cat .body { flex: 1; }
+  .cat .title { }
+  .cat .items { margin-top: 0.5mm; }
+  .cat .items .factor { display: inline; }
+  .cat .items .factor:not(:last-child)::after { content: "; "; }
+  .cat .items .factor:last-child::after { content: "."; }
+  .cat .items:empty { display: none; }
+
+  .closing-block { break-inside: avoid; }
+  .total { display: flex; align-items: flex-start; gap: 6mm; margin-top: 5mm; break-inside: avoid; }
+  .total .text { flex: 1; text-align: justify; }
+  .total .box { width: 30mm; height: 13mm; border: 1px solid #000; flex: none; display: flex; align-items: center; justify-content: center; font-size: 14pt; margin-top: 3mm; }
+
+  .sign { margin: 6mm 0 0 auto; width: 70mm; text-align: center; break-inside: avoid; }
+  .sign .line-dots { border-bottom: 1px dotted #000; height: 8mm; }
+
+  /* page 2 always starts on a new page */
+  .notes { break-before: page; page-break-before: always; font-size: 10.5pt; line-height: 1.3; }
+  .notes h2 { font-size: 12pt; margin: 0 0 3mm; font-weight: normal; }
+  .notes .row { display: flex; gap: 4mm; margin-bottom: 2mm; }
+  .notes .mk { width: 9mm; flex: none; }
+  .notes .txt { flex: 1; text-align: justify; }
+  .notes ol, .notes ul { list-style: none; margin: 1mm 0; padding: 0; }
+  .notes li { display: flex; gap: 3mm; margin-bottom: 1mm; }
+  .notes li > span:first-child { width: 7mm; flex: none; }
+  .notes .sub { margin-left: 0; }
+  .notes .closing { margin-top: 6mm; text-align: justify; }
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE 1 ===== -->
+<section class="form">
+  <div class="head">
+    <div>
+      <div class="val" data-field="employer"><span class="sample">Przykładowa Sp. z o.o.<br>ul. Testowa 1, 00-001 Warszawa<br>NIP 000-000-00-00</span></div>
+      <span class="cap">(oznaczenie pracodawcy)</span>
+    </div>
+    <div>
+      <div class="val right"><span class="sample" data-field="issuePlaceDate">Warszawa, 2026-11-10</span></div>
+      <span class="cap">(miejscowość, data)</span>
+    </div>
+  </div>
+
+  <h1>Skierowanie na badania lekarskie</h1>
+  <p class="exam">
+    (<span data-field="examType" data-value="wstępne"><span>wstępne</span></span><span class="strike">/okresowe/kontrolne</span><sup>*)</sup>)
+  </p>
+  <!-- examType: strike the two options that are NOT chosen; the markup above has "wstępne" chosen. -->
+
+  <p class="law">Działając na podstawie art. 229 § 4a ustawy z dnia 26 czerwca 1974 r. – Kodeks pracy (Dz. U. z 2022 r. poz. 1510, z późn. zm.), kieruję na badania lekarskie:</p>
+
+  <p class="line" style="margin-bottom:0">
+    <span>Pana</span><span class="strike" data-field="salutationStruck">/Panią</span><sup>*)</sup>
+    <span class="fill" data-field="fullName">Jan Testowy</span>,
+  </p>
+  <span class="cap after-cap" style="margin-left:40mm">(imię i nazwisko)</span>
+
+  <p class="line">nr PESEL<sup>**)</sup> <span class="fill" data-field="pesel">44051401359</span>,</p>
+  <!-- No-PESEL variant: replace the value of data-field="pesel" with
+       "seria, numer i nazwa dokumentu potwierdzającego tożsamość" (e.g. "AB 1234567, paszport"),
+       and for a person being hired append ", data urodzenia: 1990-01-31".
+       Example: <span class="fill" data-field="idDocument">AB 1234567, paszport, data urodzenia: 1990-01-31</span>, -->
+
+  <p class="line" style="margin-bottom:0; margin-top:4mm">
+    <span>zamieszkałego</span><span class="strike">/zamieszkałą</span><sup>*)</sup>
+    <span class="fill" data-field="address">Warszawa, ul. Przykładowa, 12, 34</span>,
+  </p>
+  <span class="cap after-cap" style="margin-left:50mm">(miejscowość, ulica, nr domu, nr lokalu)</span>
+
+  <p class="block-fill" style="margin-top:4mm">
+    <span class="strike">zatrudnionego/zatrudnioną</span><sup>*)</sup> lub
+    <span>podejmującego</span><span class="strike">/podejmującą</span><sup>*)</sup>
+    pracę na stanowisku lub stanowiskach pracy
+    <span class="fill" data-field="positions">Specjalista ds. testów</span>,
+  </p>
+  <!-- employment status: strike "zatrudnionego/zatrudnioną" entirely OR "podejmującego/podejmującą" entirely, then strike the gender form not used in the remaining pair. -->
+
+  <p class="block-fill" style="margin-top:2mm">
+    określenie <span>stanowiska</span><span class="strike">/stanowisk</span><sup>*)</sup> pracy<sup>***)</sup>:
+    <span class="fill" data-field="workDescription">Praca biurowa przy komputerze: przygotowanie i wykonywanie scenariuszy testowych, rejestrowanie wyników, kontakty telefoniczne z klientami. Praca w pozycji siedzącej, około 7 godzin dziennie, w wymiarze pełnego etatu.</span>
+  </p>
+
+  <p class="conditions">Opis warunków pracy uwzględniający informacje o występowaniu na stanowisku lub stanowiskach pracy czynników niebezpiecznych, szkodliwych dla zdrowia lub czynników uciążliwych i innych wynikających ze sposobu wykonywania pracy, z podaniem wielkości narażenia oraz aktualnych wyników badań i pomiarów czynników szkodliwych dla zdrowia, wykonanych na tym stanowisku/stanowiskach – należy wpisać nazwę czynnika/czynników i wielkość/wielkości narażenia<sup>****)</sup>:</p>
+
+  <!-- Each category: .items is flowing text; each .factor is "name – exposure" (exposure optional).
+       Empty categories keep the title only (blank as on the paper form): <div class="items"></div> is hidden. -->
+  <div class="cat" data-category="physical">
+    <div class="no">I.</div>
+    <div class="body">
+      <div class="title">Czynniki fizyczne:</div>
+      <div class="items" data-field="factors.physical">
+        <span class="factor" data-field="factor"><span data-field="factor.name">Hałas</span> – <span data-field="factor.exposure">LEX,8h = 62 dB (norma NDN 85 dB)</span></span>
+        <span class="factor" data-field="factor"><span data-field="factor.name">oświetlenie sztuczne</span> – <span data-field="factor.exposure">500 lx</span></span>
+        <span class="factor" data-field="factor"><span data-field="factor.name">mikroklimat umiarkowany</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cat" data-category="dust">
+    <div class="no">II.</div>
+    <div class="body">
+      <div class="title">Pyły:</div>
+      <div class="items" data-field="factors.dust"></div>
+    </div>
+  </div>
+
+  <div class="cat" data-category="chemical">
+    <div class="no">III.</div>
+    <div class="body">
+      <div class="title">Czynniki chemiczne:</div>
+      <div class="items" data-field="factors.chemical">
+        <span class="factor" data-field="factor"><span data-field="factor.name">Toner do drukarek</span> – <span data-field="factor.exposure">poniżej NDS</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cat" data-category="biological">
+    <div class="no">IV.</div>
+    <div class="body">
+      <div class="title">Czynniki biologiczne:</div>
+      <div class="items" data-field="factors.biological"></div>
+    </div>
+  </div>
+
+  <div class="cat" data-category="other">
+    <div class="no">V.</div>
+    <div class="body">
+      <div class="title">Inne czynniki, w tym niebezpieczne:</div>
+      <div class="items" data-field="factors.other">
+        <span class="factor" data-field="factor"><span data-field="factor.name">Praca przy monitorze ekranowym</span> – <span data-field="factor.exposure">powyżej 4 godzin dziennie</span></span>
+        <span class="factor" data-field="factor"><span data-field="factor.name">obciążenie układu mięśniowo-szkieletowego (pozycja siedząca)</span></span>
+        <span class="factor" data-field="factor"><span data-field="factor.name">obciążenie wzroku</span></span>
+        <span class="factor" data-field="factor"><span data-field="factor.name">stres związany z organizacją pracy</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="closing-block">
+  <div class="total">
+    <div class="text">Łączna liczba czynników niebezpiecznych, szkodliwych dla zdrowia lub czynników uciążliwych i innych wynikających ze sposobu wykonywania pracy wskazanych w skierowaniu:</div>
+    <div class="box" data-field="factorCount">8</div>
+  </div>
+
+  <div class="sign">
+    <div class="line-dots"></div>
+    <span class="cap">(podpis pracodawcy)</span>
+  </div>
+  </div>
+</section>
+
+<!-- ===== PAGE 2 ===== -->
+<section class="notes">
+  <h2>Objaśnienia:</h2>
+  <div class="row"><div class="mk">*)</div><div class="txt">Niepotrzebne skreślić.</div></div>
+  <div class="row"><div class="mk">**)</div><div class="txt">W przypadku osoby, której nie nadano numeru PESEL – seria, numer i nazwa dokumentu potwierdzającego tożsamość, a w przypadku osoby przyjmowanej do pracy – data urodzenia.</div></div>
+  <div class="row"><div class="mk">***)</div><div class="txt">Opisać: rodzaj pracy, podstawowe czynności, sposób i czas ich wykonywania.</div></div>
+  <div class="row"><div class="mk">****)</div><div class="txt">
+    Opis warunków pracy uwzględniający w szczególności przepisy:
+    <ul>
+      <li><span>1)</span><span>wydane na podstawie:
+        <ul class="sub">
+          <li><span>a)</span><span>art. 222 § 3 ustawy z dnia 26 czerwca 1974 r. – Kodeks pracy dotyczące wykazu substancji chemicznych, ich mieszanin, czynników lub procesów technologicznych o działaniu rakotwórczym lub mutagennym,</span></li>
+          <li><span>b)</span><span>art. 222<sup>1</sup> § 3 ustawy z dnia 26 czerwca 1974 r. – Kodeks pracy dotyczące wykazu szkodliwych czynników biologicznych,</span></li>
+          <li><span>c)</span><span>art. 227 § 2 ustawy z dnia 26 czerwca 1974 r. – Kodeks pracy dotyczące badań i pomiarów czynników szkodliwych dla zdrowia,</span></li>
+          <li><span>d)</span><span>art. 228 § 3 ustawy z dnia 26 czerwca 1974 r. – Kodeks pracy dotyczące wykazu najwyższych dopuszczalnych stężeń i natężeń czynników szkodliwych dla zdrowia w środowisku pracy,</span></li>
+          <li><span>e)</span><span>art. 25 pkt 1 ustawy z dnia 29 listopada 2000 r. – Prawo atomowe (Dz. U. z 2021 r. poz. 1941 oraz z 2022 r. poz. 974) dotyczące wskaźników pozwalających na wyznaczenie dawek promieniowania jonizującego stosowanych przy ocenie narażenia na promieniowanie jonizujące;</span></li>
+        </ul></span></li>
+      <li><span>2)</span><span>załącznika nr 1 do rozporządzenia Ministra Zdrowia i Opieki Społecznej z dnia 30 maja 1996 r. w sprawie przeprowadzania badań lekarskich pracowników, zakresu profilaktycznej opieki zdrowotnej nad pracownikami oraz orzeczeń lekarskich wydawanych do celów przewidzianych w Kodeksie pracy (Dz. U. z 2023 r. poz. 607)</span></li>
+    </ul>
+  </div></div>
+  <p class="closing">Skierowanie na badania lekarskie jest wydawane w dwóch egzemplarzach, z których jeden otrzymuje osoba kierowana na badania.</p>
+</section>
+
+</body>
+</html>

@@ -73,7 +73,7 @@ Product summary, stack, core vs deferred: `README.md`. Agent rules: `AGENTS.md`.
   - Predefined risk factors can't be deleted.
   - Only Telemedi can delete referrals and companies.
   - A deleted employee's referrals stay on the list, because their snapshot holds all the data they need.
-  - Unique PESEL (per company) and user email only apply to records that aren't deleted. That needs a partial unique index `WHERE deleted_at IS NULL`, added with raw SQL in a migration, because Prisma's schema can't express it. Deleted accounts can't log in.
+  - Unique PESEL (per company) only applies to employees who aren't deleted. That needs a partial unique index `WHERE deleted_at IS NULL`, added with raw SQL in a migration, because Prisma's schema can't express it. A deleted user's email can't be reused (Better Auth), and deleted accounts can't log in. Full data model: `docs/DATA-MODEL.md`.
   - Deferred: an audit trail, and managing deleted records (viewing, restoring, deleting for good after a set time). The user would like the database to do that last part automatically.
 - The proposed scope cuts have been reviewed. The ones the user commented on moved to Deferred in README, and the rest are now decided cuts in `SCOPE-CUTS.md`.
 - Tests: mostly unit tests, but only meaningful ones, with no mock shuffling and no trivial assertions. A few integration tests that cover a lot. At most 5 end-to-end Playwright tests, for the main flows.
@@ -105,3 +105,5 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
 
 - They dictate in English mixed with Polish, so expect misheard words.
 - They never want `git add`, `git commit` or `git push` unless they ask. They want exact dependency versions and dates as `yyyy-MM-dd`.
+
+Product decisions, with their reasons: `docs/PRODUCT-DECISIONS.md`.
