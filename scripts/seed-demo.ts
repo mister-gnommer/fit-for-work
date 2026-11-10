@@ -1,7 +1,7 @@
 // Loads the synthetic demo data from docs/seed/demo.json. Idempotent: users are matched by email,
 // companies by NIP, and employees and a company's own risk factors are only added to a company
-// that has none; existing records are left unchanged. Later changes extend this with templates
-// and referrals.
+// that has none, and the same goes for templates; existing records are left unchanged. Later
+// changes extend this with referrals.
 import "dotenv/config";
 
 import { readFile } from "node:fs/promises";
@@ -10,6 +10,7 @@ import type { Role } from "@/generated/prisma/enums";
 import { employeeSchema } from "@/features/employees/service";
 import { ensurePredefinedRiskFactors } from "@/features/risk-factors/predefined";
 import { riskFactorSchema } from "@/features/risk-factors/service";
+import { templateSchema } from "@/features/templates/service";
 import { createUserWithPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -26,7 +27,9 @@ type DemoCompany = {
   operators: DemoAccount[];
   customRiskFactors: unknown[];
   employees: Record<string, string>[];
+  templates: DemoTemplate[];
 };
+type DemoTemplate = { name: string; factors: { factorName: string; exposureLevel?: string }[] };
 type Demo = { telemedi: DemoAccount; companies: DemoCompany[] };
 
 /** Creates the account unless a user with this email already exists. */
@@ -66,6 +69,28 @@ async function ensureEmployees(companyId: string, employees: Record<string, stri
   await db.employee.createMany({ data: employees.map((employee) => ({ ...employeeSchema.parse(employee), companyId })) });
 }
 
+/** Adds the demo templates, resolving factors by name, unless the company already has templates. */
+async function ensureTemplates(companyId: string, templates: DemoTemplate[]): Promise<void> {
+  if (await db.referralTemplate.count({ where: { companyId, deletedAt: null } })) {
+    return;
+  }
+  for (const template of templates) {
+    const factors = [];
+    for (const { factorName, exposureLevel } of template.factors) {
+      const factor = await db.riskFactor.findFirst({
+        where: { name: factorName, deletedAt: null, OR: [{ companyId: null }, { companyId }] },
+        select: { id: true },
+      });
+      if (!factor) {
+        throw new Error(`Demo template "${template.name}" uses an unknown risk factor: ${factorName}`);
+      }
+      factors.push({ riskFactorId: factor.id, exposureLevel: exposureLevel ?? null });
+    }
+    const { name, factors: parsed } = templateSchema.parse({ name: template.name, factors });
+    await db.referralTemplate.create({ data: { companyId, name, factors: { create: parsed } } });
+  }
+}
+
 try {
   const demo: Demo = JSON.parse(await readFile("docs/seed/demo.json", "utf8"));
   await ensurePredefinedRiskFactors();
@@ -78,9 +103,10 @@ try {
       await ensureUser(operator, "OPERATOR", companyId);
     }
     await ensureEmployees(companyId, company.employees);
+    await ensureTemplates(companyId, company.templates);
   }
   console.log(
-    `Demo seed: ${await db.company.count()} companies, ${await db.user.count()} users, ${await db.employee.count()} employees, ${await db.riskFactor.count()} risk factors.`,
+    `Demo seed: ${await db.company.count()} companies, ${await db.user.count()} users, ${await db.employee.count()} employees, ${await db.riskFactor.count()} risk factors, ${await db.referralTemplate.count()} templates.`,
   );
 } finally {
   await db.$disconnect();
