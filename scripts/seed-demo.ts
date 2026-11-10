@@ -1,11 +1,13 @@
 // Loads the synthetic demo data from docs/seed/demo.json. Idempotent: users are matched by email,
-// companies by NIP, and a company's own risk factors are added only while it has none; existing
-// records are left unchanged. Later changes extend this with templates and referrals.
+// companies by NIP, and employees and a company's own risk factors are only added to a company
+// that has none; existing records are left unchanged. Later changes extend this with templates
+// and referrals.
 import "dotenv/config";
 
 import { readFile } from "node:fs/promises";
 
 import type { Role } from "@/generated/prisma/enums";
+import { employeeSchema } from "@/features/employees/service";
 import { ensurePredefinedRiskFactors } from "@/features/risk-factors/predefined";
 import { riskFactorSchema } from "@/features/risk-factors/service";
 import { createUserWithPassword } from "@/lib/auth";
@@ -23,6 +25,7 @@ type DemoCompany = {
   admin: DemoAccount;
   operators: DemoAccount[];
   customRiskFactors: unknown[];
+  employees: Record<string, string>[];
 };
 type Demo = { telemedi: DemoAccount; companies: DemoCompany[] };
 
@@ -55,6 +58,14 @@ async function ensureCompanyRiskFactors(companyId: string, factors: unknown[]): 
   await db.riskFactor.createMany({ data });
 }
 
+/** Adds the demo employees, validated like form input, unless the company already has employees. */
+async function ensureEmployees(companyId: string, employees: Record<string, string>[]): Promise<void> {
+  if (await db.employee.count({ where: { companyId, deletedAt: null } })) {
+    return;
+  }
+  await db.employee.createMany({ data: employees.map((employee) => ({ ...employeeSchema.parse(employee), companyId })) });
+}
+
 try {
   const demo: Demo = JSON.parse(await readFile("docs/seed/demo.json", "utf8"));
   await ensurePredefinedRiskFactors();
@@ -66,8 +77,11 @@ try {
     for (const operator of company.operators) {
       await ensureUser(operator, "OPERATOR", companyId);
     }
+    await ensureEmployees(companyId, company.employees);
   }
-  console.log(`Demo seed: ${await db.company.count()} companies, ${await db.user.count()} users, ${await db.riskFactor.count()} risk factors.`);
+  console.log(
+    `Demo seed: ${await db.company.count()} companies, ${await db.user.count()} users, ${await db.employee.count()} employees, ${await db.riskFactor.count()} risk factors.`,
+  );
 } finally {
   await db.$disconnect();
 }

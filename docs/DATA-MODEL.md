@@ -41,10 +41,11 @@ Better Auth's `user` table with extra fields. Better Auth also generates `sessio
 - `companyId`
 - `firstName`, `lastName`, `sex: Sex`
 - `pesel?`. If it's missing, `idDocumentName`, `idDocumentNumber` (series and number) and `birthDate` are required (Q4). The PESEL checksum is validated.
+- `birthDate` is a `yyyy-MM-dd` string, not a `DateTime`: it's a calendar date with no time, and both the date input and the referral snapshot use that format. It's cleared when a PESEL is given.
 - `city`, `street?`, `buildingNumber`, `flatNumber?`. The form asks for town, street, building and flat (Q12).
 - `position`, `workDescription` (Q3, Q9)
 - `deletedAt?`
-- A partial unique index on `(companyId, pesel) WHERE pesel IS NOT NULL AND deletedAt IS NULL`.
+- A partial unique index on `(companyId, pesel) WHERE deletedAt IS NULL`. SQLite treats NULLs as distinct, so employees without a PESEL never collide.
 
 ### RiskFactor
 - `category: RiskCategory`

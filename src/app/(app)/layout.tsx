@@ -27,6 +27,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
             {isTelemedi && <Link href="/companies">Firmy</Link>}
             {(!isTelemedi || selectedId) && (
               <>
+                <Link href="/employees">Pracownicy</Link>
                 <Link href="/users">Użytkownicy</Link>
                 <Link href="/risk-factors">Czynniki szkodliwe</Link>
               </>

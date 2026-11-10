@@ -26,3 +26,15 @@ export function isValidNip(nip: string): boolean {
 export function isValidPostalCode(value: string): boolean {
   return /^\d{2}-\d{3}$/.test(value);
 }
+
+const PESEL_WEIGHTS = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
+
+/** Checks a PESEL: 11 digits whose last digit matches the weighted checksum. The embedded date isn't checked. */
+export function isValidPesel(pesel: string): boolean {
+  if (!/^\d{11}$/.test(pesel)) {
+    return false;
+  }
+  const digits = [...pesel].map(Number);
+  const sum = PESEL_WEIGHTS.reduce((total, weight, index) => total + weight * digits[index], 0);
+  return (10 - (sum % 10)) % 10 === digits[10];
+}
