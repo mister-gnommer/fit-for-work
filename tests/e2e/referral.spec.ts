@@ -9,6 +9,7 @@ test("an operator creates a referral and downloads its PDF", async ({ page }) =>
   await page.getByLabel("Hasło").fill("Demo123!haslo");
   await page.getByRole("button", { name: "Zaloguj się" }).click();
 
+  await page.getByRole("link", { name: "Skierowania" }).click();
   await page.getByRole("link", { name: "Nowe skierowanie" }).click();
   await page.getByLabel("Pracownik").selectOption({ index: 0 });
   await page.getByRole("button", { name: "Dalej" }).click();

@@ -2,10 +2,10 @@ import "server-only";
 
 import { z } from "zod";
 
-import { ExamType } from "@/generated/prisma/enums";
+import { ExamType, type ReferralStatus, Role } from "@/generated/prisma/enums";
 import type { CompanyContext } from "@/lib/access";
 import { db } from "@/lib/db";
-import { NotFoundError } from "@/lib/errors";
+import { ForbiddenError, NotFoundError } from "@/lib/errors";
 import { optionalText, requiredText } from "@/lib/forms";
 
 import { getEmployee } from "../employees/service";
@@ -90,4 +90,40 @@ export async function getReferral(ctx: CompanyContext, id: string) {
     throw new NotFoundError();
   }
   return { ...referral, snapshot: referralSnapshotSchema.parse(referral.snapshot) };
+}
+
+/**
+ * The company's referrals that aren't deleted, newest first. Names and dates come from each
+ * snapshot, so renamed or deleted employees show as they were issued.
+ */
+export async function listReferrals(ctx: CompanyContext) {
+  const referrals = await db.referral.findMany({
+    where: { companyId: ctx.companyId, deletedAt: null },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, status: true, deadline: true, snapshot: true },
+  });
+  return referrals.map(({ snapshot, ...referral }) => {
+    const { employee, examType, issueDate } = referralSnapshotSchema.parse(snapshot);
+    return { ...referral, employeeName: `${employee.firstName} ${employee.lastName}`, examType, issueDate };
+  });
+}
+
+/** Sets a referral's status; any status may follow any other (ledger Q5). Telemedi only. */
+export async function setReferralStatus(ctx: CompanyContext, id: string, status: ReferralStatus): Promise<void> {
+  await updateAsTelemedi(ctx, id, { status });
+}
+
+/** Soft deletes a referral; its summary and PDF become unavailable. Telemedi only. */
+export async function deleteReferral(ctx: CompanyContext, id: string): Promise<void> {
+  await updateAsTelemedi(ctx, id, { deletedAt: new Date() });
+}
+
+async function updateAsTelemedi(ctx: CompanyContext, id: string, data: { status?: ReferralStatus; deletedAt?: Date }): Promise<void> {
+  if (ctx.user.role !== Role.TELEMEDI) {
+    throw new ForbiddenError();
+  }
+  const { count } = await db.referral.updateMany({ where: { id, companyId: ctx.companyId, deletedAt: null }, data });
+  if (count === 0) {
+    throw new NotFoundError();
+  }
 }
