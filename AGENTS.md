@@ -10,10 +10,7 @@
 - Before changing Next.js code, read the relevant installed-version guide in `node_modules/next/dist/docs/`. Keep `agentRules: false`; maintain useful framework guidance here manually.
 - Containers:
   - Use the local setup for development, tests, local deployment and browser previews; don't start Docker or Podman for routine work.
-  - At the end of each OpenSpec change, verify the Docker build and containerized app once, including startup, database access and the changed flow.
-  - Record the result in the change's tasks and reuse it during review, verification and archive; don't repeat a passed Docker check for the same change.
-  - If Docker verification fails or is unavailable, report it explicitly; don't mark it passed or silently switch to Podman.
-  - Remove only your disposable verification containers and volumes afterward; preserve user resources and the image cache.
+  - Docker checks are off (user decision, 2026-11-10): don't plan, run or ask the user to run a Docker check at the end of a change. Don't add a Docker task to new changes; if an existing one has one, note "skipped: Docker checks are off" instead of marking it passed.
 - Several agents may be working at once:
   - Each OpenSpec change has one owner. Proposing one is safe in the main checkout, since it only writes to `openspec/changes/<name>/`.
   - Implement code (`/opsx:apply`) in your own git worktree, on a branch named after the change.
