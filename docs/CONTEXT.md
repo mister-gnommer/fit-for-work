@@ -67,6 +67,15 @@ Product summary, stack, core vs deferred: `README.md`. Agent rules: `AGENTS.md`.
 - PESEL is unique within a company, enforced by a composite unique constraint on `(company_id, pesel)`. The same person can be an employee of two companies.
 - Login rate limiting is deferred. Multiple referrals per employee are allowed.
 - Signature and stamp: leave blank space on the PDF and sign by hand.
+- Deleting (core): everything uses soft delete, meaning a `deleted_at` column and hidden everywhere in the UI.
+  - Admins can delete operators.
+  - Operators can delete their own account, employees, templates and their company's own risk factors.
+  - Predefined risk factors can't be deleted.
+  - Only Telemedi can delete referrals and companies.
+  - A deleted employee's referrals stay on the list, because their snapshot holds all the data they need.
+  - Unique PESEL (per company) and user email only apply to records that aren't deleted. That needs a partial unique index `WHERE deleted_at IS NULL`, added with raw SQL in a migration, because Prisma's schema can't express it. Deleted accounts can't log in.
+  - Deferred: an audit trail, and managing deleted records (viewing, restoring, deleting for good after a set time). The user would like the database to do that last part automatically.
+- The proposed scope cuts have been reviewed. The ones the user commented on moved to Deferred in README, and the rest are now decided cuts in `SCOPE-CUTS.md`.
 - Tests: mostly unit tests, but only meaningful ones, with no mock shuffling and no trivial assertions. A few integration tests that cover a lot. At most 5 end-to-end Playwright tests, for the main flows.
 
 ### Technical choices by the agent (not reviewed by the user)
@@ -82,13 +91,15 @@ These are also listed in `README.md` under Deferred.
 - Can HR operators cancel a referral?
 - Should we limit referrals per employee, for example to one open at a time?
 
-Things the user decided not to build are in `docs/SCOPE-CUTS.md`, which is waiting for their review.
+Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
 
 ### Project state
 
-- Written so far: `README.md`, `AGENTS.md`, `CLAUDE.md` (imports AGENTS.md), `docs/research/`, `docs/SCOPE-CUTS.md`, and OpenSpec initialized for Claude Code (`openspec/`, `.claude/`). No app code yet and no OpenSpec changes.
+- OpenSpec is configured for Claude Code, Codex and OpenCode.
+- `setup-tech-stack` is implemented on branch `setup-tech-stack` in `/tmp/fit-for-work-setup-tech-stack`; code is uncommitted and has not been integrated into the main checkout. No business modules are implemented.
 - The seven-change OpenSpec sequence and working approach are recorded in `docs/notes.md`.
-- Next OpenSpec change: `/opsx:propose setup-tech-stack`. Proposed scope cuts still await review.
+- Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Container checks used Docker Compose through rootless Podman's API. Seven moderate transitive lint-tooling audit findings remain.
+- Next: review/verify setup before archiving; accounts/company access follows setup. Scope cuts have been reviewed.
 
 ### Working with this user
 

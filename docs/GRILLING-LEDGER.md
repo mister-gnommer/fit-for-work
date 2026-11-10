@@ -54,6 +54,27 @@ The official form isn't a fixed-field form. Each risk-factor category gets a sin
 - B: `@react-pdf/renderer`.
 - C: `pdf-lib` drawing text by coordinates over an image of the form.
 
+### Round 3: form fields missing from the data model (2026-11-10)
+
+#### Q9: Work description
+
+- ✅ **A: A free-text field on the employee, next to the position. It's copied onto the referral, where it can be edited.**
+- B: It's typed in on each referral only.
+
+#### Q10: "Employed" vs. "taking up work"
+
+- ✅ **A: Set from the exam type: pre-employment means "taking up work", periodic and follow-up mean "employed". It can be overridden on the referral form.**
+- B: It's always picked by hand.
+
+#### Q11: Place and date of issue
+
+- ✅ **A: The company's town and the date the referral is created.**
+- B: A separate "place of issue" field on the company.
+
+#### Q12: Employee home address
+
+- ✅ **A: Required on the employee: town, street and building number. The flat number is optional.**
+
 #### Q7: Demo data
 
 - ✅ **A: The seed adds synthetic demo data: two or three companies with an admin, an operator, employees, templates and referrals in different statuses. Login details are in the README.**
