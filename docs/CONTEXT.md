@@ -106,7 +106,7 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
   Every later module scopes its queries with `requireCompanyContext()` and filters by `companyId` and `deletedAt: null` (see its `design.md`).
 
   The Docker check (task 5.2) passed on 2026-11-10, run by the user.
-- `manage-employees` is implemented and merged: `src/features/employees/`, the `/employees` pages, `isValidPesel`, the `Employee` model and demo employees. Not yet archived. Its Docker check was skipped by the user (see its `tasks.md`).
+- `manage-employees` is implemented, merged and archived at `openspec/changes/archive/20261110-manage-employees/`, with its `employee-management` spec synced. It added `src/features/employees/`, the `/employees` pages, `isValidPesel`, the `Employee` model and demo employees. Its Docker check was skipped by the user (see its `tasks.md`).
 - `manage-risk-factors` is implemented on branch `manage-risk-factors`, in parallel with `manage-employees`. It adds:
   - the `RiskFactor` model (a null `companyId` means predefined)
   - predefined factors seeded by `db:seed`
