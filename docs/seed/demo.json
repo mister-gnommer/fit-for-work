@@ -1,0 +1,240 @@
+{
+  "telemedi": {
+    "name": "Telemedi Administrator",
+    "email": "telemedi@example.com",
+    "password": "Demo123!haslo"
+  },
+  "companies": [
+    {
+      "name": "Przykładowa Logistyka Sp. z o.o.",
+      "city": "Wrocław",
+      "street": "ul. Przykładowa",
+      "buildingNumber": "12",
+      "postalCode": "50-001",
+      "nip": "5210001126",
+      "admin": {
+        "name": "Magdalena Wiśniewska",
+        "email": "admin.logistyka@example.com",
+        "password": "Demo123!haslo"
+      },
+      "operators": [
+        {
+          "name": "Tomasz Zieliński",
+          "email": "operator1.logistyka@example.com",
+          "password": "Demo123!haslo"
+        },
+        {
+          "name": "Karolina Lewandowska",
+          "email": "operator2.logistyka@example.com",
+          "password": "Demo123!haslo"
+        }
+      ],
+      "employees": [
+        {
+          "firstName": "Piotr",
+          "lastName": "Kamiński",
+          "sex": "MALE",
+          "pesel": "84051712374",
+          "city": "Wrocław",
+          "street": "ul. Magazynowa",
+          "buildingNumber": "4",
+          "flatNumber": "12",
+          "position": "Magazynier",
+          "workDescription": "Przyjmowanie i wydawanie towaru w magazynie, obsługa wózka widłowego. Praca na zmiany, sporadycznie w porze nocnej."
+        },
+        {
+          "firstName": "Anna",
+          "lastName": "Mazur",
+          "sex": "FEMALE",
+          "pesel": "90093021486",
+          "city": "Wrocław",
+          "street": "ul. Kolejowa",
+          "buildingNumber": "18",
+          "position": "Pracownik kompletacji",
+          "workDescription": "Kompletowanie zamówień na stanowisku z monitorem ekranowym przez część zmiany."
+        },
+        {
+          "firstName": "Marek",
+          "lastName": "Nowicki",
+          "sex": "MALE",
+          "pesel": "78021130754",
+          "city": "Wrocław",
+          "buildingNumber": "22",
+          "position": "Kierowca",
+          "workDescription": "Prowadzenie samochodu dostawczego do 3,5 t, rozładunek towaru u klientów."
+        },
+        {
+          "firstName": "Ewa",
+          "lastName": "Dąbrowska",
+          "sex": "FEMALE",
+          "pesel": "95120545508",
+          "city": "Wrocław",
+          "street": "ul. Lipowa",
+          "buildingNumber": "9",
+          "flatNumber": "5",
+          "position": "Specjalista ds. spedycji",
+          "workDescription": "Obsługa dokumentów przewozowych przy komputerze, około 6 godzin dziennie przed monitorem."
+        },
+        {
+          "firstName": "Krzysztof",
+          "lastName": "Sikora",
+          "sex": "MALE",
+          "pesel": "69072251255",
+          "city": "Wrocław",
+          "buildingNumber": "30",
+          "position": "Brygadzista magazynu",
+          "workDescription": "Nadzór nad zmianą magazynową, okresowe prace na wysokości przy regałach do 4 m."
+        },
+        {
+          "firstName": "Natalia",
+          "lastName": "Kowalczyk",
+          "sex": "FEMALE",
+          "pesel": "01241463869",
+          "city": "Wrocław",
+          "street": "ul. Chłodnicza",
+          "buildingNumber": "7",
+          "flatNumber": "1",
+          "position": "Magazynier",
+          "workDescription": "Przyjmowanie towaru, część zmiany w chłodni o temperaturze około 2 °C."
+        },
+        {
+          "firstName": "Adam",
+          "lastName": "Wójcik",
+          "sex": "MALE",
+          "idDocumentName": "dowód osobisty",
+          "idDocumentNumber": "ABC123456",
+          "birthDate": "1976-11-02",
+          "city": "Gdańsk",
+          "street": "ul. Stoczniowa",
+          "buildingNumber": "9",
+          "position": "Operator wózka widłowego",
+          "workDescription": "Rozładunek i załadunek towarów wózkiem widłowym w magazynie wysokiego składowania, praca zmianowa do 8 godzin dziennie."
+        },
+        {
+          "firstName": "Łukasz",
+          "lastName": "Adamczyk",
+          "sex": "MALE",
+          "pesel": "99060342135",
+          "city": "Gdańsk",
+          "buildingNumber": "17",
+          "position": "Kierowca ciężarówki",
+          "workDescription": "Przewóz materiałów budowlanych samochodem ciężarowym, prowadzenie pojazdu powyżej 3,5 t."
+        }
+      ],
+      "customRiskFactors": [
+        {
+          "category": "OTHER",
+          "name": "Podnoszenie ładunków powyżej 25 kg"
+        },
+        {
+          "category": "PHYSICAL",
+          "name": "Hałas na hali 85 dB"
+        }
+      ],
+      "templates": [
+        {
+          "name": "Magazynier",
+          "factors": [
+            {
+              "factorName": "Hałas na hali 85 dB",
+              "exposureLevel": "85 dB LEX,8h"
+            },
+            {
+              "factorName": "Podnoszenie ładunków powyżej 25 kg"
+            },
+            {
+              "factorName": "Praca zmianowa, w tym praca w porze nocnej"
+            }
+          ]
+        },
+        {
+          "name": "Kierowca",
+          "factors": [
+            {
+              "factorName": "Praca na stanowiskach związanych z kierowaniem pojazdami"
+            },
+            {
+              "factorName": "Obsługa monitorów ekranowych",
+              "exposureLevel": "4 h dziennie"
+            },
+            {
+              "factorName": "Praca zmianowa, w tym praca w porze nocnej"
+            }
+          ]
+        }
+      ],
+      "referrals": [
+        {
+          "employeeIndex": 0,
+          "examType": "PERIODIC",
+          "status": "DONE",
+          "deadline": "2026-12-15",
+          "templateName": "Magazynier"
+        },
+        {
+          "employeeIndex": 2,
+          "examType": "PERIODIC",
+          "status": "IN_PROGRESS",
+          "deadline": "2027-01-15",
+          "templateName": "Kierowca"
+        },
+        {
+          "employeeIndex": 5,
+          "examType": "FOLLOW_UP",
+          "status": "CREATED",
+          "deadline": "2026-12-20"
+        },
+        {
+          "employeeIndex": 6,
+          "examType": "PRE_EMPLOYMENT",
+          "status": "CONFIRMED",
+          "deadline": "2026-12-10",
+          "templateName": "Magazynier"
+        },
+        {
+          "employeeIndex": 7,
+          "examType": "PERIODIC",
+          "status": "CANCELLED",
+          "deadline": "2027-01-29",
+          "templateName": "Kierowca"
+        }
+      ]
+    },
+    {
+      "name": "Demo Budowa Sp. z o.o.",
+      "city": "Gdańsk",
+      "street": "ul. Testowa",
+      "buildingNumber": "5",
+      "flatNumber": "2",
+      "postalCode": "80-001",
+      "nip": "5830002226",
+      "admin": {
+        "name": "Grzegorz Kubiak",
+        "email": "admin.budowa@example.com",
+        "password": "Demo123!haslo"
+      },
+      "operators": [],
+      "employees": [],
+      "customRiskFactors": [],
+      "templates": [],
+      "referrals": []
+    },
+    {
+      "name": "Przykładowe Usługi Rolnicze Sp. j.",
+      "city": "Zalesie Górne",
+      "buildingNumber": "7",
+      "postalCode": "32-400",
+      "nip": "6750003336",
+      "admin": {
+        "name": "Bartosz Olszewski",
+        "email": "admin.rolnicze@example.com",
+        "password": "Demo123!haslo"
+      },
+      "operators": [],
+      "employees": [],
+      "customRiskFactors": [],
+      "templates": [],
+      "referrals": []
+    }
+  ]
+}

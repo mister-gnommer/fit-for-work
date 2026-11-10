@@ -112,6 +112,7 @@ The official form isn't a fixed-field form. Each risk-factor category gets a sin
 
 - ✅ **A: The seed adds synthetic demo data: two or three companies with an admin, an operator, employees, templates and referrals in different statuses. Login details are in the README.**
 - B: Only the required seed.
+- ◐ **Narrowed later: one presentation company gets all the demo data (8 employees, one of them without a PESEL, plus templates and 5 referrals). The other two companies have only an admin, so the switcher has something to show. The data is in `docs/seed/`.**
 
 #### Q8: Test stack
 

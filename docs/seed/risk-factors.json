@@ -1,0 +1,138 @@
+[
+  {
+    "category": "PHYSICAL",
+    "name": "Hałas"
+  },
+  {
+    "category": "PHYSICAL",
+    "name": "Drgania miejscowe, kończyny górne"
+  },
+  {
+    "category": "PHYSICAL",
+    "name": "Drgania ogólne"
+  },
+  {
+    "category": "PHYSICAL",
+    "name": "Promieniowanie jonizujące"
+  },
+  {
+    "category": "PHYSICAL",
+    "name": "Pola elektromagnetyczne"
+  },
+  {
+    "category": "PHYSICAL",
+    "name": "Mikroklimat gorący"
+  },
+  {
+    "category": "PHYSICAL",
+    "name": "Mikroklimat zimny"
+  },
+  {
+    "category": "DUSTS",
+    "name": "Pyły zawierające krzemionkę krystaliczną"
+  },
+  {
+    "category": "DUSTS",
+    "name": "Pyły węgla"
+  },
+  {
+    "category": "DUSTS",
+    "name": "Pyły nieorganiczne zawierające włókna azbestu"
+  },
+  {
+    "category": "DUSTS",
+    "name": "Pył drewna"
+  },
+  {
+    "category": "DUSTS",
+    "name": "Pył mąki"
+  },
+  {
+    "category": "DUSTS",
+    "name": "Pył zawierający metale twarde, np. wolfram, kobalt"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Benzen i homologi: toluen, ksylen"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Formaldehyd"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Amoniak"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Izocyjanianowe związki"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Ołów i jego związki"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Arsen i jego związki"
+  },
+  {
+    "category": "CHEMICAL",
+    "name": "Azotu tlenki"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Wirus zapalenia wątroby typu B, HBV"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Wirus zapalenia wątroby typu C, HCV"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Ludzki wirus niedoboru odporności, HIV"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Prątek gruźlicy"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Wirus kleszczowego zapalenia mózgu, KZM"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Borrelia burgdorferi"
+  },
+  {
+    "category": "BIOLOGICAL",
+    "name": "Promieniowce termofilne, grzyby pleśniowe o działaniu uczulającym"
+  },
+  {
+    "category": "OTHER",
+    "name": "Praca na wysokości"
+  },
+  {
+    "category": "OTHER",
+    "name": "Praca na stanowiskach związanych z kierowaniem pojazdami"
+  },
+  {
+    "category": "OTHER",
+    "name": "Obsługa monitorów ekranowych"
+  },
+  {
+    "category": "OTHER",
+    "name": "Praca zmianowa, w tym praca w porze nocnej"
+  },
+  {
+    "category": "OTHER",
+    "name": "Praca w wymuszonej pozycji"
+  },
+  {
+    "category": "OTHER",
+    "name": "Praca związana z obsługą narzędzi, maszyn, urządzeń i pojazdów poruszających się poza drogami publicznymi, np. wózki widłowe"
+  },
+  {
+    "category": "OTHER",
+    "name": "Niekorzystne czynniki psychospołeczne"
+  }
+]
