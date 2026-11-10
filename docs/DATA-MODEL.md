@@ -57,6 +57,7 @@ Better Auth's `user` table with extra fields. Better Auth also generates `sessio
 - `companyId`
 - `name`
 - `deletedAt?`
+- A partial unique index on `(companyId, name) WHERE deletedAt IS NULL`.
 
 ### ReferralTemplateFactor
 - `templateId`, `riskFactorId`, with `(templateId, riskFactorId)` unique

@@ -6,9 +6,7 @@ import { RiskCategory } from "@/generated/prisma/enums";
 import { deleteRiskFactorAction } from "@/features/risk-factors/actions";
 import { listRiskFactors } from "@/features/risk-factors/service";
 import { requireCompanyContext } from "@/lib/access";
-import { riskCategoryLabels } from "@/lib/labels";
-
-const ROMAN = ["I", "II", "III", "IV", "V"];
+import { riskCategoryLabels, riskCategoryNumerals } from "@/lib/labels";
 
 export default async function RiskFactorsPage() {
   const { companyId } = await requireCompanyContext();
@@ -22,14 +20,14 @@ export default async function RiskFactorsPage() {
           <Link href="/risk-factors/new">Dodaj czynnik</Link>
         </Button>
       </div>
-      {Object.values(RiskCategory).map((category, index) => {
+      {Object.values(RiskCategory).map((category) => {
         const inCategory = factors.filter((factor) => factor.category === category);
         // Predefined first, then the company's own, each in creation order.
         const ordered = [...inCategory.filter((factor) => !factor.companyId), ...inCategory.filter((factor) => factor.companyId)];
         return (
           <section key={category} className="grid gap-2">
             <h2 className="text-lg font-semibold">
-              {ROMAN[index]}. {riskCategoryLabels[category]}
+              {riskCategoryNumerals[category]}. {riskCategoryLabels[category]}
             </h2>
             <ul className="divide-y rounded-md border">
               {ordered.map((factor) => (
