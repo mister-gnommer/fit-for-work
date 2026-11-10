@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
                 <Link href="/users">Użytkownicy</Link>
                 <Link href="/risk-factors">Czynniki szkodliwe</Link>
                 <Link href="/templates">Szablony</Link>
-                <Link href="/referrals/new">Nowe skierowanie</Link>
+                <Link href="/referrals">Skierowania</Link>
               </>
             )}
           </nav>
