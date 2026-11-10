@@ -73,7 +73,7 @@ Product summary, stack, core vs deferred: `README.md`. Agent rules: `AGENTS.md`.
   - Predefined risk factors can't be deleted.
   - Only Telemedi can delete referrals and companies.
   - A deleted employee's referrals stay on the list, because their snapshot holds all the data they need.
-  - Unique PESEL (per company) only applies to employees who aren't deleted. That needs a partial unique index `WHERE deleted_at IS NULL`, added with raw SQL in a migration, because Prisma's schema can't express it. A deleted user's email can't be reused (Better Auth), and deleted accounts can't log in. Full data model: `docs/DATA-MODEL.md`.
+  - Unique PESEL (per company) only applies to employees who aren't deleted. That needs a partial unique index `WHERE deletedAt IS NULL`, declared in the Prisma schema (`partialIndexes` preview feature, see DATA-MODEL). A deleted user's email can't be reused (Better Auth), and deleted accounts can't log in. Full data model: `docs/DATA-MODEL.md`.
   - Deferred: an audit trail, and managing deleted records (viewing, restoring, deleting for good after a set time). The user would like the database to do that last part automatically.
 - The proposed scope cuts have been reviewed. The ones the user commented on moved to Deferred in README, and the rest are now decided cuts in `SCOPE-CUTS.md`.
 - Tests: mostly unit tests, but only meaningful ones, with no mock shuffling and no trivial assertions. A few integration tests that cover a lot. At most 5 end-to-end Playwright tests, for the main flows.
@@ -96,10 +96,19 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
 ### Project state
 
 - OpenSpec is configured for Claude Code, Codex and OpenCode.
-- `setup-tech-stack` is implemented, verified and archived. No business modules are implemented.
+- `setup-tech-stack` is implemented, verified and archived.
+- `accounts-and-company-access` is implemented on branch `accounts-and-company-access`:
+  - Better Auth sessions and server-side login
+  - companies, users and the company switcher
+  - access helpers in `src/lib/access.ts`
+  - seeds
+
+  Every later module scopes its queries with `requireCompanyContext()` and filters by `companyId` and `deletedAt: null` (see its `design.md`).
+
+  The Docker check (task 5.2) passed on 2026-11-10, run by the user.
 - The seven-change OpenSpec sequence and working approach are recorded in `docs/notes.md`.
 - Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Initial container checks used Podman; the build, HTTP and Prisma/SQLite connection were then verified on Docker Engine. The demo runs on Docker Engine at http://localhost:3000; Podman is stopped. Seven moderate transitive lint-tooling audit findings remain.
-- Setup is archived at `openspec/changes/archive/20261110-setup-tech-stack/`; both capability specs are synced. Next: accounts/company access. Scope cuts have been reviewed.
+- Setup is archived at `openspec/changes/archive/20261110-setup-tech-stack/`; both capability specs are synced. Scope cuts have been reviewed.
 
 ### Working with this user
 

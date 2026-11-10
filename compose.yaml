@@ -3,8 +3,14 @@ services:
     build: .
     ports:
       - "3000:3000"
+    # Values come from the host's .env (Compose interpolation); it is never copied into the image.
     environment:
       DATABASE_URL: file:/data/app.db
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      TELEMEDI_NAME: ${TELEMEDI_NAME:-}
+      TELEMEDI_EMAIL: ${TELEMEDI_EMAIL:-}
+      TELEMEDI_PASSWORD: ${TELEMEDI_PASSWORD:-}
     volumes:
       - app-data:/data
 

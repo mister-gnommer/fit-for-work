@@ -1,24 +1,18 @@
 import { execFileSync } from "node:child_process";
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { expect, test } from "vitest";
 
 import { PrismaClient } from "@/generated/prisma/client";
+import { createMigratedDatabase } from "@/test/temp-database";
 
 test("SQLite data survives reconnecting to an isolated migrated database", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "fit-for-work-db-"));
-  const url = `file:${join(directory, "test.db")}`;
+  const { directory, url, remove } = await createMigratedDatabase();
   const client = new PrismaClient({ adapter: new PrismaBetterSqlite3({ url }) });
 
   try {
-    execFileSync(process.execPath, ["node_modules/prisma/build/index.js", "migrate", "deploy"], {
-      env: { ...process.env, DATABASE_URL: url },
-      stdio: "pipe",
-    });
     // Isolate the cached server client and contain any wrong relative database path.
     execFileSync(process.execPath, ["--conditions=react-server", "--import", import.meta.resolve("tsx"), "--input-type=module"], {
       cwd: directory,
@@ -46,7 +40,7 @@ test("SQLite data survives reconnecting to an isolated migrated database", async
     try {
       await client.$disconnect();
     } finally {
-      await rm(directory, { recursive: true, force: true });
+      await remove();
     }
   }
 });

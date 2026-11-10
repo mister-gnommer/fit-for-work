@@ -7,7 +7,7 @@ Prisma 7 on SQLite. Field names are in English and the UI labels in Polish. "?" 
 - `id`: `String @id @default(cuid())`, the Prisma default. Every table has `createdAt` and `updatedAt`. Sort by `createdAt`, not by `id`.
 - `deletedAt?` marks a soft delete. The table is hidden in the UI when it's set. All deletable tables have it.
 - Company scoping: every company-owned table has `companyId`. All reads and writes go through one server-side helper that adds the filter.
-- Partial unique indexes (`… WHERE deletedAt IS NULL`) are added with raw SQL in a migration, because the Prisma schema can't express them.
+- Partial unique indexes (`… WHERE deletedAt IS NULL`) are declared in the schema with `@@unique([...], where: raw("..."))`, behind the `partialIndexes` preview feature. Don't hand-write them in migration SQL, or later migrations will drop them as drift. Check that the generated SQL keeps the `WHERE`.
 
 ## Enums
 

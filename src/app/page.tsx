@@ -1,14 +1,9 @@
-import { Card, CardDescription, CardHeader } from "@/components/ui/card";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <main className="mx-auto max-w-3xl px-8 py-16">
-      <Card>
-        <CardHeader>
-          <h1 className="text-2xl font-semibold">Fit for Work</h1>
-          <CardDescription>Skierowania na badania medycyny pracy</CardDescription>
-        </CardHeader>
-      </Card>
-    </main>
-  );
+import { requireUser } from "@/lib/access";
+import { startPath } from "@/lib/permissions";
+
+export default async function Home() {
+  const user = await requireUser();
+  redirect(startPath(user.role));
 }

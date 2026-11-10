@@ -16,4 +16,4 @@ ENV NODE_ENV=production
 ENV DATABASE_URL=file:/data/app.db
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run db:deploy && exec npm start -- --hostname 0.0.0.0"]
+CMD ["sh", "-c", "npm run db:deploy && npm run db:seed && exec npm start -- --hostname 0.0.0.0"]

@@ -15,4 +15,6 @@ playwright-report
 test-results
 tmp
 docs
+# The demo seed reads docs/seed/demo.json inside the container.
+!docs/seed
 openspec
