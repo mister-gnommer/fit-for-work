@@ -5,8 +5,6 @@ export type FormState = {
   errors?: Record<string, string>;
   message?: string;
   values?: Record<string, string>;
-  /** Checked checkboxes that share one name (e.g. the referral's factors). */
-  factorIds?: string[];
 };
 
 export type ServiceResult = { ok: true } | { ok: false; errors: Record<string, string> };

@@ -121,6 +121,10 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
   - the summary at `/referrals/[id]`
   - the PDF download at `/referrals/[id]/pdf`
   - exam type, employment status and referral status labels
+- `apply-referral-template` (6b) is implemented on branch `apply-referral-template`. It adds:
+  - an optional template in step 1 of `/referrals/new` that pre-ticks the template's live factors and exposure levels
+  - one shared `FactorPicker` (`src/components/factor-picker.tsx`) for the template and referral forms, read with `readFactorSelection`
+  - the 5 demo referrals, created through `createReferral` by the demo seed
 - The seven-change OpenSpec sequence and working approach are recorded in `docs/notes.md`.
 - Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Initial container checks used Podman; the build, HTTP and Prisma/SQLite connection were then verified on Docker Engine. The demo runs on Docker Engine at http://localhost:3000; Podman is stopped. Seven moderate transitive lint-tooling audit findings remain.
 - Setup is archived at `openspec/changes/archive/20261110-setup-tech-stack/`; both capability specs are synced. Scope cuts have been reviewed.

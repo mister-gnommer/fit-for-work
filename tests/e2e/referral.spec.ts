@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("an operator creates a referral and downloads its PDF", async ({ page }) => {
+test("an operator creates a referral from a template and downloads its PDF", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
 
@@ -9,16 +9,28 @@ test("an operator creates a referral and downloads its PDF", async ({ page }) =>
   await page.getByLabel("Hasło").fill("Demo123!haslo");
   await page.getByRole("button", { name: "Zaloguj się" }).click();
 
-  await page.getByRole("link", { name: "Nowe skierowanie" }).click();
+  // Waiting for the redirect keeps the next navigation from racing the session cookie.
+  await expect(page).not.toHaveURL(/\/login$/);
+  await page.goto("/referrals/new");
   await page.getByLabel("Pracownik").selectOption({ index: 0 });
+  await page.getByLabel("Szablon").selectOption({ label: "Magazynier" });
   await page.getByRole("button", { name: "Dalej" }).click();
+  await expect(page.getByText("Szablon: Magazynier")).toBeVisible();
   await expect(page.getByLabel("Stanowisko")).not.toHaveValue("");
 
+  // The template's three factors arrive ticked, with its exposure level.
+  const hallNoise = page.getByRole("checkbox", { name: /Hałas na hali 85 dB/ });
+  const shiftWork = page.getByRole("checkbox", { name: /Praca zmianowa, w tym praca w porze nocnej/ });
+  await expect(hallNoise).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: /Podnoszenie ładunków powyżej 25 kg/ })).toBeChecked();
+  await expect(shiftWork).toBeChecked();
+  await expect(page.getByLabel("Wielkość narażenia: Hałas na hali 85 dB")).toHaveValue("85 dB LEX,8h");
+
+  // Adjust before saving.
+  await shiftWork.uncheck();
+  await page.getByLabel("Wielkość narażenia: Hałas na hali 85 dB").fill("87 dB LEX,8h");
   await page.getByLabel("Rodzaj badania").selectOption("PRE_EMPLOYMENT");
   await expect(page.getByLabel("Status zatrudnienia")).toHaveValue("TAKING_UP_WORK");
-  await page.getByRole("checkbox", { name: "Hałas", exact: true }).check();
-  await page.getByLabel("Wielkość narażenia: Hałas", { exact: true }).fill("85 dB");
-  await page.getByRole("checkbox", { name: /Podnoszenie ładunków powyżej 25 kg/ }).check();
   await page.getByLabel("Termin").fill("2030-01-15");
   await page.getByRole("button", { name: "Utwórz skierowanie" }).click();
 

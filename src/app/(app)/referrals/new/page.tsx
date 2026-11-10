@@ -6,15 +6,19 @@ import { getEmployee, listEmployees } from "@/features/employees/service";
 import { ReferralForm } from "@/features/referrals/referral-form";
 import { warsawDate } from "@/features/referrals/snapshot";
 import { listRiskFactors } from "@/features/risk-factors/service";
+import { getTemplate, listTemplates } from "@/features/templates/service";
 import { requireCompanyContext } from "@/lib/access";
 
-// Step 1 picks the employee with a plain GET form; step 2 (?employeeId=…) shows the referral form.
+const SELECT = "h-9 rounded-md border px-3 text-sm";
+
+// Step 1 picks the employee and an optional template with a plain GET form; step 2
+// (?employeeId=…&templateId=…) shows the referral form, pre-filled from the template.
 export default async function NewReferralPage({ searchParams }: PageProps<"/referrals/new">) {
   const ctx = await requireCompanyContext();
-  const { employeeId } = await searchParams;
+  const { employeeId, templateId } = await searchParams;
 
   if (typeof employeeId !== "string" || !employeeId) {
-    const employees = await listEmployees(ctx);
+    const [employees, templates] = await Promise.all([listEmployees(ctx), listTemplates(ctx)]);
     return (
       <>
         <h1 className="text-2xl font-semibold">Nowe skierowanie</h1>
@@ -26,10 +30,10 @@ export default async function NewReferralPage({ searchParams }: PageProps<"/refe
             </Link>
           </p>
         ) : (
-          <form method="get" className="flex max-w-xl items-end gap-3">
-            <div className="grid flex-1 gap-1.5">
+          <form method="get" className="grid max-w-xl gap-4">
+            <div className="grid gap-1.5">
               <Label htmlFor="employeeId">Pracownik</Label>
-              <select id="employeeId" name="employeeId" required className="h-9 rounded-md border px-3 text-sm">
+              <select id="employeeId" name="employeeId" required className={SELECT}>
                 {employees.map((employee) => (
                   <option key={employee.id} value={employee.id}>
                     {employee.lastName} {employee.firstName} – {employee.position}
@@ -37,29 +41,51 @@ export default async function NewReferralPage({ searchParams }: PageProps<"/refe
                 ))}
               </select>
             </div>
-            <Button type="submit">Dalej</Button>
+            <div className="grid gap-1.5">
+              <Label htmlFor="templateId">Szablon</Label>
+              <select id="templateId" name="templateId" className={SELECT}>
+                <option value="">Bez szablonu</option>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Button type="submit">Dalej</Button>
+            </div>
           </form>
         )}
       </>
     );
   }
 
-  const employee = await getEmployee(ctx, employeeId);
-  const factors = await listRiskFactors(ctx.companyId);
+  const [employee, factors, template] = await Promise.all([
+    getEmployee(ctx, employeeId),
+    listRiskFactors(ctx.companyId),
+    typeof templateId === "string" && templateId ? getTemplate(ctx, templateId) : null,
+  ]);
+  // getTemplate returns only the template's factors that aren't deleted.
+  const initial = new Map(template?.factors.map((factor) => [factor.riskFactorId, factor.exposureLevel]));
+
   return (
     <>
       <h1 className="text-2xl font-semibold">
         Nowe skierowanie: {employee.firstName} {employee.lastName}
       </h1>
+      <p className="text-sm">
+        Szablon: {template ? template.name : "bez szablonu"}{" "}
+        <Link href="/referrals/new" className="underline">
+          Zmień
+        </Link>
+      </p>
       <ReferralForm
+        // A new key per employee and template, so client navigation never keeps stale ticks.
+        key={`${employee.id}:${template?.id ?? ""}`}
         employee={{ id: employee.id, position: employee.position, workDescription: employee.workDescription }}
-        // Predefined first within each category, as on the risk factor page.
-        factors={[...factors.filter((factor) => !factor.companyId), ...factors.filter((factor) => factor.companyId)].map((factor) => ({
-          id: factor.id,
-          category: factor.category,
-          name: factor.name,
-          predefined: !factor.companyId,
-        }))}
+        factors={factors}
+        initial={initial}
         today={warsawDate(new Date())}
       />
     </>

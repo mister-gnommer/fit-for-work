@@ -182,7 +182,10 @@
           "employeeIndex": 5,
           "examType": "FOLLOW_UP",
           "status": "CREATED",
-          "deadline": "2026-12-20"
+          "deadline": "2026-12-20",
+          "factors": [
+            { "factorName": "Mikroklimat zimny", "exposureLevel": "około 2 °C, część zmiany" }
+          ]
         },
         {
           "employeeIndex": 6,

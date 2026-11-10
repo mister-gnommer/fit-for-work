@@ -14,7 +14,7 @@ cp .env.example .env   # then set BETTER_AUTH_SECRET (openssl rand -base64 32) a
 npm run db:generate
 npm run db:deploy
 npm run db:seed        # predefined risk factors + first Telemedi account from TELEMEDI_* in .env
-npm run db:seed:demo   # optional: demo companies and accounts
+npm run db:seed:demo   # optional: demo companies, accounts, employees, factors, templates and referrals
 npm run dev
 ```
 
@@ -35,7 +35,7 @@ Run commands from the project root. `DATABASE_URL` defaults to `file:./dev.db`; 
 - `npm run db:migrate -- --name <change-name>` creates and applies a development migration after changing the schema.
 - `npm run db:deploy` applies committed migrations without changing the schema.
 - `npm run db:seed` adds any missing predefined risk factors from `docs/seed/risk-factors.json`, and creates the first Telemedi account from `TELEMEDI_NAME`, `TELEMEDI_EMAIL` and `TELEMEDI_PASSWORD` when none exists. It never changes or removes existing records.
-- `npm run db:seed:demo` loads the synthetic demo data from `docs/seed/demo.json`. Running it again changes nothing.
+- `npm run db:seed:demo` loads the synthetic demo data from `docs/seed/demo.json`, including 5 referrals in every status for Przykładowa Logistyka. Running it again changes nothing.
 - `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`. The referral PDF test needs Chromium (below).
 
 Demo logins after `db:seed:demo`, all with the password `Demo123!haslo`:

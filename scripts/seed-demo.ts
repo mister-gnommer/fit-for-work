@@ -1,16 +1,17 @@
 // Loads the synthetic demo data from docs/seed/demo.json. Idempotent: users are matched by email,
-// companies by NIP, and employees and a company's own risk factors are only added to a company
-// that has none, and the same goes for templates; existing records are left unchanged. Later
-// changes extend this with referrals.
+// companies by NIP, and employees, a company's own risk factors, templates and referrals are only
+// added to a company that has none of them yet; existing records are left unchanged.
 import "dotenv/config";
 
 import { readFile } from "node:fs/promises";
 
-import type { Role } from "@/generated/prisma/enums";
+import type { ExamType, ReferralStatus, Role } from "@/generated/prisma/enums";
 import { employeeSchema } from "@/features/employees/service";
+import { createReferral } from "@/features/referrals/service";
+import { defaultEmploymentStatus } from "@/features/referrals/snapshot";
 import { ensurePredefinedRiskFactors } from "@/features/risk-factors/predefined";
 import { riskFactorSchema } from "@/features/risk-factors/service";
-import { templateSchema } from "@/features/templates/service";
+import { getTemplate, templateSchema } from "@/features/templates/service";
 import { createUserWithPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -28,8 +29,18 @@ type DemoCompany = {
   customRiskFactors: unknown[];
   employees: Record<string, string>[];
   templates: DemoTemplate[];
+  referrals: DemoReferral[];
 };
-type DemoTemplate = { name: string; factors: { factorName: string; exposureLevel?: string }[] };
+type DemoFactor = { factorName: string; exposureLevel?: string };
+type DemoTemplate = { name: string; factors: DemoFactor[] };
+type DemoReferral = {
+  employeeIndex: number;
+  examType: ExamType;
+  status: ReferralStatus;
+  deadline: string;
+  templateName?: string;
+  factors?: DemoFactor[];
+};
 type Demo = { telemedi: DemoAccount; companies: DemoCompany[] };
 
 /** Creates the account unless a user with this email already exists. */
@@ -69,23 +80,71 @@ async function ensureEmployees(companyId: string, employees: Record<string, stri
   await db.employee.createMany({ data: employees.map((employee) => ({ ...employeeSchema.parse(employee), companyId })) });
 }
 
+/**
+ * Looks up demo factors by name among the predefined and the company's own factors.
+ * @param owner what uses the factors, for the error message
+ */
+async function resolveFactors(companyId: string, factors: DemoFactor[], owner: string) {
+  const resolved = [];
+  for (const { factorName, exposureLevel } of factors) {
+    const factor = await db.riskFactor.findFirst({
+      where: { name: factorName, deletedAt: null, OR: [{ companyId: null }, { companyId }] },
+      select: { id: true },
+    });
+    if (!factor) {
+      throw new Error(`Demo ${owner} uses an unknown risk factor: ${factorName}`);
+    }
+    resolved.push({ riskFactorId: factor.id, exposureLevel: exposureLevel ?? null });
+  }
+  return resolved;
+}
+
+/**
+ * Creates the demo referrals through the same service as the form, as the company's first
+ * operator, then sets each one's demo status. Skipped when the company has any referrals.
+ */
+async function ensureReferrals(companyId: string, company: DemoCompany): Promise<void> {
+  if (company.referrals.length === 0 || (await db.referral.count({ where: { companyId } }))) {
+    return;
+  }
+  const operator = await db.user.findFirst({
+    where: { companyId, role: "OPERATOR", deletedAt: null },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, name: true, email: true, role: true, companyId: true },
+  });
+  if (!operator) {
+    throw new Error(`Demo company "${company.name}" needs an operator to create its referrals`);
+  }
+  const ctx = { user: operator, companyId };
+  for (const referral of company.referrals) {
+    // Employees are inserted together, so they're found by name rather than by insertion order.
+    const { firstName, lastName } = company.employees[referral.employeeIndex];
+    const employee = await db.employee.findFirstOrThrow({ where: { companyId, firstName, lastName, deletedAt: null } });
+    const factors = referral.templateName
+      ? (await getTemplate(ctx, (await db.referralTemplate.findFirstOrThrow({ where: { companyId, name: referral.templateName, deletedAt: null } })).id)).factors
+      : await resolveFactors(companyId, referral.factors ?? [], `referral for ${firstName} ${lastName}`);
+    const result = await createReferral(ctx, employee.id, {
+      examType: referral.examType,
+      employmentStatus: defaultEmploymentStatus(referral.examType),
+      position: employee.position,
+      workDescription: employee.workDescription,
+      deadline: referral.deadline,
+      factors: factors.map((factor) => ({ id: factor.riskFactorId, exposureLevel: factor.exposureLevel })),
+    });
+    if (!result.ok) {
+      throw new Error(`Demo referral for ${firstName} ${lastName} failed: ${JSON.stringify(result.errors)}`);
+    }
+    await db.referral.update({ where: { id: result.id }, data: { status: referral.status } });
+  }
+}
+
 /** Adds the demo templates, resolving factors by name, unless the company already has templates. */
 async function ensureTemplates(companyId: string, templates: DemoTemplate[]): Promise<void> {
   if (await db.referralTemplate.count({ where: { companyId, deletedAt: null } })) {
     return;
   }
   for (const template of templates) {
-    const factors = [];
-    for (const { factorName, exposureLevel } of template.factors) {
-      const factor = await db.riskFactor.findFirst({
-        where: { name: factorName, deletedAt: null, OR: [{ companyId: null }, { companyId }] },
-        select: { id: true },
-      });
-      if (!factor) {
-        throw new Error(`Demo template "${template.name}" uses an unknown risk factor: ${factorName}`);
-      }
-      factors.push({ riskFactorId: factor.id, exposureLevel: exposureLevel ?? null });
-    }
+    const factors = await resolveFactors(companyId, template.factors, `template "${template.name}"`);
     const { name, factors: parsed } = templateSchema.parse({ name: template.name, factors });
     await db.referralTemplate.create({ data: { companyId, name, factors: { create: parsed } } });
   }
@@ -104,9 +163,10 @@ try {
     }
     await ensureEmployees(companyId, company.employees);
     await ensureTemplates(companyId, company.templates);
+    await ensureReferrals(companyId, company);
   }
   console.log(
-    `Demo seed: ${await db.company.count()} companies, ${await db.user.count()} users, ${await db.employee.count()} employees, ${await db.riskFactor.count()} risk factors, ${await db.referralTemplate.count()} templates.`,
+    `Demo seed: ${await db.company.count()} companies, ${await db.user.count()} users, ${await db.employee.count()} employees, ${await db.riskFactor.count()} risk factors, ${await db.referralTemplate.count()} templates, ${await db.referral.count()} referrals.`,
   );
 } finally {
   await db.$disconnect();

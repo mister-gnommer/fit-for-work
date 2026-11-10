@@ -2,37 +2,40 @@
 
 import { startTransition, useActionState, useState } from "react";
 
+import { FactorPicker, type PickerFactor } from "@/components/factor-picker";
 import { Field } from "@/components/field";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExamType, RiskCategory } from "@/generated/prisma/enums";
+import { ExamType } from "@/generated/prisma/enums";
 import type { FormState } from "@/lib/forms";
-import { employmentStatusLabels, examTypeLabels, riskCategoryLabels } from "@/lib/labels";
+import { employmentStatusLabels, examTypeLabels } from "@/lib/labels";
 import type { EmploymentStatus } from "@/lib/referral-pdf/snapshot";
 
 import { createReferralAction } from "./actions";
 import { defaultEmploymentStatus } from "./snapshot";
 
-const ROMAN = ["I", "II", "III", "IV", "V"];
 const SELECT = "h-9 rounded-md border px-3 text-sm";
 
 type Props = {
   employee: { id: string; position: string; workDescription: string };
-  factors: { id: string; category: RiskCategory; name: string; predefined: boolean }[];
+  factors: PickerFactor[];
+  /** Factors to tick when the form opens (from a template), with their exposure levels. */
+  initial: Map<string, string | null>;
   /** `yyyy-MM-dd` in Poland; the earliest allowed deadline. */
   today: string;
 };
 
 /** The referral form for one employee: exam data, risk factors with exposure levels, deadline. */
-export function ReferralForm({ employee, factors, today }: Props) {
+export function ReferralForm({ employee, factors, initial, today }: Props) {
   const [state, action, pending] = useActionState<FormState, FormData>(createReferralAction.bind(null, employee.id), {});
   const values = state.values ?? {};
   const [examType, setExamType] = useState<ExamType>(ExamType.PERIODIC);
   // Until the user picks a status by hand, it follows the exam type.
   const [chosenStatus, setChosenStatus] = useState<EmploymentStatus | null>(null);
   const employmentStatus = chosenStatus ?? defaultEmploymentStatus(examType);
-  const checked = new Set(state.factorIds ?? []);
+  // After a failed save, the submitted values win, including which boxes were left unchecked.
+  const isChecked = (id: string) => (state.values ? `factor-${id}` in state.values : initial.has(id));
+  const exposure = (id: string) => state.values?.[`exposure-${id}`] ?? initial.get(id) ?? "";
 
   return (
     <form
@@ -94,31 +97,7 @@ export function ReferralForm({ employee, factors, today }: Props) {
       <fieldset className="grid gap-3">
         <legend className="mb-2 text-lg font-semibold">Czynniki szkodliwe</legend>
         {state.errors?.factors && <p className="text-sm text-destructive">{state.errors.factors}</p>}
-        {Object.values(RiskCategory).map((category, index) => (
-          <div key={category} className="grid gap-1">
-            <h3 className="font-medium">
-              {ROMAN[index]}. {riskCategoryLabels[category]}
-            </h3>
-            {factors
-              .filter((factor) => factor.category === category)
-              .map((factor) => (
-                <div key={factor.id} className="grid grid-cols-[1fr_16rem] items-center gap-3 text-sm">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" name="factorIds" value={factor.id} defaultChecked={checked.has(factor.id)} />
-                    {factor.name}
-                    {!factor.predefined && <span className="text-muted-foreground">(własny)</span>}
-                  </label>
-                  <Input
-                    name={`exposure:${factor.id}`}
-                    aria-label={`Wielkość narażenia: ${factor.name}`}
-                    placeholder="Wielkość narażenia (opcjonalnie)"
-                    defaultValue={values[`exposure:${factor.id}`] ?? ""}
-                    maxLength={200}
-                  />
-                </div>
-              ))}
-          </div>
-        ))}
+        <FactorPicker factors={factors} isChecked={isChecked} exposure={exposure} />
       </fieldset>
 
       <Field
