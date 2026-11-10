@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: file:/data/app.db
+    volumes:
+      - app-data:/data
+
+volumes:
+  app-data:

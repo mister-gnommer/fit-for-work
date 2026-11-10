@@ -96,9 +96,9 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
 ### Project state
 
 - OpenSpec is configured for Claude Code, Codex and OpenCode.
-- `setup-tech-stack` is implemented on branch `setup-tech-stack` in `/tmp/fit-for-work-setup-tech-stack`; code is uncommitted and has not been integrated into the main checkout. No business modules are implemented.
+- `setup-tech-stack` is implemented and committed on branch `setup-tech-stack` in `/tmp/fit-for-work-setup-tech-stack`; it has not been merged into main. No business modules are implemented.
 - The seven-change OpenSpec sequence and working approach are recorded in `docs/notes.md`.
-- Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Container checks used Docker Compose through rootless Podman's API. Seven moderate transitive lint-tooling audit findings remain.
+- Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Initial container checks used Podman; the build, HTTP and Prisma/SQLite connection were then verified on Docker Engine. The demo runs on Docker Engine at http://localhost:3000; Podman is stopped. Seven moderate transitive lint-tooling audit findings remain.
 - Next: review/verify setup before archiving; accounts/company access follows setup. Scope cuts have been reviewed.
 
 ### Working with this user

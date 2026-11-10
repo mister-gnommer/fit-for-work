@@ -6,7 +6,62 @@ UI language: Polish. Desktop only.
 
 ## Setup
 
-TBD. Everything runs in a single Docker container, with the SQLite file kept on a mounted volume.
+Use Node.js 24.14.1 (`nvm use`) and npm 11.11.0.
+
+```sh
+npm ci
+cp .env.example .env
+npm run db:generate
+npm run db:deploy
+npm run dev
+```
+
+Open http://localhost:3000. To check and run a production build:
+
+```sh
+npm run lint
+npm run typecheck
+npm run build
+npm start
+```
+
+### Database and tests
+
+Run commands from the project root. `DATABASE_URL` defaults to `file:./dev.db`; both Prisma's CLI and the application use that file in the project root. Override it with an absolute `file:/...` URL for another location. Keep the database and its sidecar files outside `public/`.
+
+- `npm run db:generate` regenerates the ignored Prisma client.
+- `npm run db:migrate -- --name <change-name>` creates and applies a development migration after changing the schema.
+- `npm run db:deploy` applies committed migrations without changing the schema; it is also safe on this initial empty schema.
+- `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`.
+
+The first business tables and seeds arrive with their owning module changes.
+
+Install Chromium before running the browser smoke test:
+
+```sh
+npm exec -- playwright install chromium
+npm run test:e2e
+```
+
+On supported Debian/Ubuntu hosts, use `npm exec -- playwright install --with-deps chromium` to install missing system libraries too. `test:e2e` builds the app and starts its own production server on port 3101; keep that port free. It does not reuse your development server.
+
+### Docker
+
+With Docker Engine and Compose available:
+
+```sh
+docker compose up -d --build
+docker compose logs app
+```
+
+Open http://localhost:3000. The container runs as a non-root user, applies committed migrations before starting, and stores SQLite at `/data/app.db` on the named `app-data` volume. No host `.env` is copied into the image.
+
+```sh
+docker compose up -d --force-recreate
+docker compose down
+```
+
+Recreating the container or running `down` preserves the named volume. Browser binaries are installed separately for tests; the PDF runtime is added with referral creation.
 
 ## Tech stack
 
