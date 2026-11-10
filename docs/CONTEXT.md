@@ -97,7 +97,7 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
 
 - OpenSpec is configured for Claude Code, Codex and OpenCode.
 - `setup-tech-stack` is implemented, verified and archived.
-- `accounts-and-company-access` is implemented on branch `accounts-and-company-access`:
+- `accounts-and-company-access` is implemented, merged and archived at `openspec/changes/archive/20261110-accounts-and-company-access/`. Its specs are synced (`user-accounts`, `company-management`, plus updates to `application-runtime` and `development-workflow`). It added:
   - Better Auth sessions and server-side login
   - companies, users and the company switcher
   - access helpers in `src/lib/access.ts`

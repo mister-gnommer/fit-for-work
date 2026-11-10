@@ -7,8 +7,8 @@ Build small, sequential changes: stack setup first, accounts/access second, then
 | Order | Change | Scope |
 |---|---|---|
 | 1 ✅ | `setup-tech-stack` (archived 2026-11-10) | Next.js/TypeScript, Prisma/SQLite, Tailwind/shadcn, Vitest/Playwright tooling, Docker with persistent storage, run instructions. |
-| 2 | `accounts-and-company-access` | Login/logout, seeded Telemedi account, companies/employer details, admins/operators, password management, company switcher and server-side company/role boundaries. Soft delete of users and companies. Seeds the Telemedi account and demo companies from `docs/seed/`. |
-| 2b | `render-referral-pdf` (in parallel with 2) | Referral snapshot type, HTML/CSS copy of the official form, PDF rendering with headless Chromium through Playwright, Chromium and a serif font with Polish characters in the Docker image. No database, auth or UI. |
+| 2 ✅ | `accounts-and-company-access` (archived 2026-11-10) | Login/logout, seeded Telemedi account, companies/employer details, admins/operators, password management, company switcher and server-side company/role boundaries. Soft delete of users and companies. Seeds the Telemedi account and demo companies from `docs/seed/`. |
+| 2b ✅ | `render-referral-pdf` (in parallel with 2; archived 2026-11-10) | Referral snapshot type, HTML/CSS copy of the official form, PDF rendering with headless Chromium through Playwright, Chromium and a serif font with Polish characters in the Docker image. No database, auth or UI. |
 | 3 | `manage-employees` | Employee list and create/edit form, identity validation, position, PESEL checksum and uniqueness within a company (among non-deleted employees). Soft delete. |
 | 4 | `manage-risk-factors` | Five categories, seeded read-only factors, company-owned factors with create/edit/soft-delete. Predefined list: `docs/seed/risk-factors.json`. |
 | 5 | `manage-referral-templates` | List/create/edit templates referencing factors with optional exposure levels; factor edits appear on subsequent use. Soft delete. |
