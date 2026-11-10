@@ -49,6 +49,10 @@ The server never derives the status itself: it saves the value that was posted.
 
 **Factors:** one checkbox per factor, `name="factorIds" value={id}`, plus a text input `exposure:<id>`. The action reads them with `formData.getAll("factorIds")` and `formData.get("exposure:" + id)`. After a validation error, the kept values (`FormState.values`) include the selected IDs and exposures, so checkboxes and exposure inputs re-render as entered. To make that possible, `FormState.values` gets one optional `factorIds` field in `src/lib/forms.ts` (a small extension).
 
+**Changed during implementation:**
+- **Submitting:** the form submits through `onSubmit` with `event.preventDefault()` and `startTransition(() => action(formData))`, not through `<form action>`. With `<form action>`, React resets the form after every action, and the two controlled selects (exam type and employment status) snapped back to their first option on a validation error while the component still held the user's choice. Without that reset, the uncontrolled inputs also keep what the user typed. The form therefore needs JavaScript, which the status logic needs anyway.
+- **Checked factors:** they are returned in a top-level `FormState.factorIds: string[]` (in `src/lib/forms.ts`), not inside `FormState.values`, which only holds strings.
+
 ### Input schema and service checks
 
 `referralInputSchema` (zod):

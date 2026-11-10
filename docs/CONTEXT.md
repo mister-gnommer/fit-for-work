@@ -115,7 +115,7 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
 
   Templates (change 5) reference factors by ID.
 - `manage-referral-templates` is implemented, merged and archived at `openspec/changes/archive/20261110-manage-referral-templates/`, with its `referral-templates` spec synced. Its Docker check was skipped by the user (see its `tasks.md`). It added `src/features/templates/`, the `/templates` pages, and the `ReferralTemplate` and `ReferralTemplateFactor` models. A deleted factor is hidden by every template read (`getTemplate`), which `create-referral` should use to apply a template.
-- `create-referral` is implemented on branch `create-referral`, in parallel with `manage-referral-templates`, and without templates (they come in 6b, see `docs/notes.md`). It adds:
+- `create-referral` is implemented, merged and archived at `openspec/changes/archive/20261110-create-referral/`, with its `referral-creation` spec synced. It was built without templates (they come in 6b, see `docs/notes.md`). Its Docker check was skipped by the user. It added:
   - the `Referral` model with a zod-checked snapshot
   - the two-step form at `/referrals/new`
   - the summary at `/referrals/[id]`
