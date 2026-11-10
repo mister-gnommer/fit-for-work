@@ -36,7 +36,7 @@ Run commands from the project root. `DATABASE_URL` defaults to `file:./dev.db`; 
 - `npm run db:deploy` applies committed migrations without changing the schema.
 - `npm run db:seed` creates the first Telemedi account from `TELEMEDI_NAME`, `TELEMEDI_EMAIL` and `TELEMEDI_PASSWORD` when none exists. It never changes existing accounts.
 - `npm run db:seed:demo` loads the synthetic demo data from `docs/seed/demo.json`. Running it again changes nothing.
-- `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`.
+- `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`. The referral PDF test needs Chromium (below).
 
 Demo logins after `db:seed:demo`, all with the password `Demo123!haslo`:
 
@@ -45,10 +45,11 @@ Demo logins after `db:seed:demo`, all with the password `Demo123!haslo`:
 - Demo Budowa: `admin.budowa@example.com`
 - Przykładowe Usługi Rolnicze: `admin.rolnicze@example.com`
 
-Install Chromium before running the browser smoke test:
+Install Chromium before running `npm test` or the browser smoke test. Referral PDFs use the Liberation Serif font (`fonts-liberation` on Debian/Ubuntu, `liberation-serif-fonts` on Fedora); without it, another serif font is used.
 
 ```sh
 npm exec -- playwright install chromium
+npm test
 npm run test:e2e
 ```
 
@@ -71,7 +72,7 @@ docker compose up -d --force-recreate
 docker compose down
 ```
 
-Recreating the container or running `down` preserves the named volume. Browser binaries are installed separately for tests; the PDF runtime is added with referral creation.
+Recreating the container or running `down` preserves the named volume. The image includes the Chromium headless shell and Liberation Serif for rendering referral PDFs; browser binaries for tests on the host are installed separately.
 
 ## Tech stack
 
