@@ -121,7 +121,7 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
   - the summary at `/referrals/[id]`
   - the PDF download at `/referrals/[id]/pdf`
   - exam type, employment status and referral status labels
-- `list-and-track-referrals` is implemented and merged, not yet archived (Docker checks are off). It added the `/referrals` list (read from each snapshot, so deleted or renamed employees show as issued), and Telemedi-only status changes and soft deletes on the referral summary page. The header's "Nowe skierowanie" link became "Skierowania"; the list has the "Nowe skierowanie" button.
+- `list-and-track-referrals` is implemented, merged and archived at `openspec/changes/archive/20261110-list-and-track-referrals/`, with its `referral-tracking` spec synced (Docker checks are off). It added the `/referrals` list (read from each snapshot, so deleted or renamed employees show as issued), and Telemedi-only status changes and soft deletes on the referral summary page. The header's "Nowe skierowanie" link became "Skierowania"; the list has the "Nowe skierowanie" button.
 - The seven-change OpenSpec sequence and working approach are recorded in `docs/notes.md`.
 - Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Initial container checks used Podman; the build, HTTP and Prisma/SQLite connection were then verified on Docker Engine. The demo runs on Docker Engine at http://localhost:3000; Podman is stopped. Seven moderate transitive lint-tooling audit findings remain.
 - Setup is archived at `openspec/changes/archive/20261110-setup-tech-stack/`; both capability specs are synced. Scope cuts have been reviewed.

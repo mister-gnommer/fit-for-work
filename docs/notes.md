@@ -14,7 +14,7 @@ Build small, sequential changes: stack setup first, accounts/access second, then
 | 5 | `manage-referral-templates` | List/create/edit templates referencing factors with optional exposure levels; factor edits appear on subsequent use. Soft delete. |
 | 6 ✅ | `create-referral` (archived 2026-11-10) | Employee/exam selection, editable position/factors/exposures, deadline, required form fields, building, validating and saving the frozen snapshot, the download route, and immediate PDF download through the renderer from `render-referral-pdf`. Templates moved to 6b so this could run in parallel with `manage-referral-templates`. |
 | 6b | `apply-referral-template` | After 5 and 6 are both merged: a template select on the referral form that pre-fills factors and exposure levels (via `getTemplate`), the demo referrals from `docs/seed/demo.json` (they name templates), and keeping one of the two factor pickers (templates vs. referral form). |
-| 7 ✅ | `list-and-track-referrals` (merged 2026-11-10) | Company referral list, existing PDF downloads, statuses and Telemedi-only status changes and deletes. |
+| 7 ✅ | `list-and-track-referrals` (archived 2026-11-10) | Company referral list, existing PDF downloads, statuses and Telemedi-only status changes and deletes. |
 
 `render-referral-pdf` was split out of referral creation so it can run in parallel with accounts: it needs no schema, auth or company scoping. It renders a PDF from a snapshot; `create-referral` builds the snapshot and wires in the download. Use `research/womp-referral-form.pdf` as the layout reference (omit its broken legislative footnote) and `research/referral-template/referral.html` as the HTML starting point. The PDF approach is recorded in `GRILLING-LEDGER.md`.
 
