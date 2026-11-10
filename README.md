@@ -13,7 +13,7 @@ npm ci
 cp .env.example .env   # then set BETTER_AUTH_SECRET (openssl rand -base64 32) and TELEMEDI_PASSWORD
 npm run db:generate
 npm run db:deploy
-npm run db:seed        # first Telemedi account from TELEMEDI_* in .env
+npm run db:seed        # predefined risk factors + first Telemedi account from TELEMEDI_* in .env
 npm run db:seed:demo   # optional: demo companies and accounts
 npm run dev
 ```
@@ -34,7 +34,7 @@ Run commands from the project root. `DATABASE_URL` defaults to `file:./dev.db`; 
 - `npm run db:generate` regenerates the ignored Prisma client.
 - `npm run db:migrate -- --name <change-name>` creates and applies a development migration after changing the schema.
 - `npm run db:deploy` applies committed migrations without changing the schema.
-- `npm run db:seed` creates the first Telemedi account from `TELEMEDI_NAME`, `TELEMEDI_EMAIL` and `TELEMEDI_PASSWORD` when none exists. It never changes existing accounts.
+- `npm run db:seed` adds any missing predefined risk factors from `docs/seed/risk-factors.json`, and creates the first Telemedi account from `TELEMEDI_NAME`, `TELEMEDI_EMAIL` and `TELEMEDI_PASSWORD` when none exists. It never changes or removes existing records.
 - `npm run db:seed:demo` loads the synthetic demo data from `docs/seed/demo.json`. Running it again changes nothing.
 - `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`. The referral PDF test needs Chromium (below).
 
@@ -64,7 +64,7 @@ docker compose up -d --build
 docker compose logs app
 ```
 
-Open http://localhost:3000. The container runs as a non-root user, applies committed migrations and creates the first Telemedi account before starting, and stores SQLite at `/data/app.db` on the named `app-data` volume. No host `.env` is copied into the image.
+Open http://localhost:3000. The container runs as a non-root user, applies committed migrations, adds the predefined risk factors and creates the first Telemedi account before starting, and stores SQLite at `/data/app.db` on the named `app-data` volume. No host `.env` is copied into the image.
 
 ```sh
 docker compose exec app npm run db:seed:demo   # optional demo data; run after `logs app` shows "Ready"

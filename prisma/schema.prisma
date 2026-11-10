@@ -14,6 +14,15 @@ enum Role {
   OPERATOR
 }
 
+// The official form's categories I–V.
+enum RiskCategory {
+  PHYSICAL
+  DUSTS
+  CHEMICAL
+  BIOLOGICAL
+  OTHER
+}
+
 model Company {
   id             String    @id @default(cuid())
   name           String
@@ -27,9 +36,29 @@ model Company {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
   users          User[]
+  riskFactors    RiskFactor[]
 
   @@unique([nip], where: raw("deletedAt IS NULL"))
   @@map("company")
+}
+
+// companyId is null for the predefined factors (read-only, shared by every company).
+model RiskFactor {
+  id        String       @id @default(cuid())
+  category  RiskCategory
+  name      String
+  companyId String?
+  // Restrict: a hard-deleted company must not turn its factors into predefined ones.
+  company   Company?     @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+
+  // Predefined rows have a null companyId, and SQLite treats NULLs as distinct, so this only covers company factors.
+  @@unique([companyId, category, name], where: raw("deletedAt IS NULL"))
+  // Keeps two seed runs at the same time from duplicating the predefined list.
+  @@unique([category, name], where: raw("companyId IS NULL"))
+  @@map("risk_factor")
 }
 
 // Better Auth core models (user, session, account, verification), with its field names.

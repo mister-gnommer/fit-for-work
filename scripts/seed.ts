@@ -1,7 +1,9 @@
-// Creates the first Telemedi account from TELEMEDI_* env vars when no Telemedi user exists.
-// Runs at container start, so a missing configuration is logged rather than fatal.
+// Adds missing predefined risk factors and creates the first Telemedi account from TELEMEDI_* env
+// vars when no Telemedi user exists. Runs at container start, so a missing account configuration
+// is logged rather than fatal.
 import "dotenv/config";
 
+import { ensurePredefinedRiskFactors } from "@/features/risk-factors/predefined";
 import { createUserWithPassword, PASSWORD_MIN_LENGTH } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -14,6 +16,7 @@ if (!BETTER_AUTH_SECRET) {
 }
 
 try {
+  console.log(`Seed: added ${await ensurePredefinedRiskFactors()} predefined risk factors.`);
   if ((await db.user.count({ where: { role: "TELEMEDI", deletedAt: null } })) > 0) {
     console.log("Seed: a Telemedi account already exists, nothing to do.");
   } else if (!TELEMEDI_NAME || !TELEMEDI_EMAIL || !TELEMEDI_PASSWORD || TELEMEDI_PASSWORD.length < PASSWORD_MIN_LENGTH) {
