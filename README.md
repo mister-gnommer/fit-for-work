@@ -32,14 +32,15 @@ Run commands from the project root. `DATABASE_URL` defaults to `file:./dev.db`; 
 - `npm run db:generate` regenerates the ignored Prisma client.
 - `npm run db:migrate -- --name <change-name>` creates and applies a development migration after changing the schema.
 - `npm run db:deploy` applies committed migrations without changing the schema; it is also safe on this initial empty schema.
-- `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`.
+- `npm test` runs Vitest once. Integration tests use disposable SQLite databases and never reset `dev.db`. The referral PDF test needs Chromium (below).
 
 The first business tables and seeds arrive with their owning module changes.
 
-Install Chromium before running the browser smoke test:
+Install Chromium before running `npm test` or the browser smoke test. Referral PDFs use the Liberation Serif font (`fonts-liberation` on Debian/Ubuntu, `liberation-serif-fonts` on Fedora); without it, another serif font is used.
 
 ```sh
 npm exec -- playwright install chromium
+npm test
 npm run test:e2e
 ```
 
@@ -61,7 +62,7 @@ docker compose up -d --force-recreate
 docker compose down
 ```
 
-Recreating the container or running `down` preserves the named volume. Browser binaries are installed separately for tests; the PDF runtime is added with referral creation.
+Recreating the container or running `down` preserves the named volume. The image includes the Chromium headless shell and Liberation Serif for rendering referral PDFs; browser binaries for tests on the host are installed separately.
 
 ## Tech stack
 
