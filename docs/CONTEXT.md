@@ -121,6 +121,7 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
   - the summary at `/referrals/[id]`
   - the PDF download at `/referrals/[id]/pdf`
   - exam type, employment status and referral status labels
+- `list-and-track-referrals` is implemented, merged and archived at `openspec/changes/archive/20261110-list-and-track-referrals/`, with its `referral-tracking` spec synced (Docker checks are off). It added the `/referrals` list (read from each snapshot, so deleted or renamed employees show as issued), and Telemedi-only status changes and soft deletes on the referral summary page. The header's "Nowe skierowanie" link became "Skierowania"; the list has the "Nowe skierowanie" button.
 - `apply-referral-template` (6b) is implemented on branch `apply-referral-template`. It adds:
   - an optional template in step 1 of `/referrals/new` that pre-ticks the template's live factors and exposure levels
   - one shared `FactorPicker` (`src/components/factor-picker.tsx`) for the template and referral forms, read with `readFactorSelection`

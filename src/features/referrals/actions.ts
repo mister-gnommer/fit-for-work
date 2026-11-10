@@ -1,12 +1,16 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+
+import { ReferralStatus } from "@/generated/prisma/enums";
 
 import { requireCompanyContext } from "@/lib/access";
 import { fieldErrors, formValues, type FormState } from "@/lib/forms";
 
 import { readFactorSelection } from "../templates/selection";
-import { createReferral, referralInputSchema } from "./service";
+import { createReferral, deleteReferral, referralInputSchema, setReferralStatus } from "./service";
 import { warsawDate } from "./snapshot";
 
 /** A text form value, or undefined when the field is missing. */
@@ -37,4 +41,23 @@ export async function createReferralAction(employeeId: string, _state: FormState
     return { errors: result.errors, values: formValues(formData) };
   }
   redirect(`/referrals/${result.id}`);
+}
+
+/**
+ * Sets the bound referral's status and stays on its summary. Telemedi only (checked by the
+ * service). An unknown status can only come from a tampered request, so it throws.
+ */
+export async function setReferralStatusAction(referralId: string, formData: FormData): Promise<void> {
+  const ctx = await requireCompanyContext();
+  const status = z.enum(ReferralStatus).parse(formData.get("status"));
+  await setReferralStatus(ctx, referralId, status);
+  revalidatePath("/referrals", "layout");
+}
+
+/** Soft deletes a referral and returns to the list. Telemedi only (checked by the service). */
+export async function deleteReferralAction(referralId: string): Promise<void> {
+  const ctx = await requireCompanyContext();
+  await deleteReferral(ctx, referralId);
+  revalidatePath("/referrals", "layout");
+  redirect("/referrals");
 }

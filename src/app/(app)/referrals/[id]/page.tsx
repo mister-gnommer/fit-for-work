@@ -1,4 +1,8 @@
+import { ConfirmButton } from "@/components/confirm-button";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Role } from "@/generated/prisma/enums";
+import { deleteReferralAction, setReferralStatusAction } from "@/features/referrals/actions";
 import { getReferral } from "@/features/referrals/service";
 import { requireCompanyContext } from "@/lib/access";
 import { employmentStatusLabels, examTypeLabels, referralStatusLabels } from "@/lib/labels";
@@ -35,6 +39,25 @@ export default async function ReferralPage({ params }: PageProps<"/referrals/[id
           <a href={`/referrals/${id}/pdf`}>Pobierz PDF</a>
         </Button>
       </div>
+      {ctx.user.role === Role.TELEMEDI && (
+        <div className="flex items-end gap-4 border-t pt-6">
+          <form action={setReferralStatusAction.bind(null, id)} className="flex items-end gap-2">
+            <div className="grid gap-1.5">
+              <Label htmlFor="status">Status</Label>
+              {/* React ignores defaultValue changes on a mounted select; remount so a saved status shows. */}
+              <select key={status} id="status" name="status" defaultValue={status} className="h-9 rounded-md border px-3 text-sm">
+                {Object.entries(referralStatusLabels).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+            </div>
+            <Button type="submit" variant="outline">Zmień status</Button>
+          </form>
+          <ConfirmButton question="Usunąć to skierowanie? Zniknie z listy firmy." action={deleteReferralAction.bind(null, id)}>
+            Usuń skierowanie
+          </ConfirmButton>
+        </div>
+      )}
     </>
   );
 }

@@ -9,9 +9,8 @@ test("an operator creates a referral from a template and downloads its PDF", asy
   await page.getByLabel("Hasło").fill("Demo123!haslo");
   await page.getByRole("button", { name: "Zaloguj się" }).click();
 
-  // Waiting for the redirect keeps the next navigation from racing the session cookie.
-  await expect(page).not.toHaveURL(/\/login$/);
-  await page.goto("/referrals/new");
+  await page.getByRole("link", { name: "Skierowania" }).click();
+  await page.getByRole("link", { name: "Nowe skierowanie" }).click();
   await page.getByLabel("Pracownik").selectOption({ index: 0 });
   await page.getByLabel("Szablon").selectOption({ label: "Magazynier" });
   await page.getByRole("button", { name: "Dalej" }).click();
