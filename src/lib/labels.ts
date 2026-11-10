@@ -16,6 +16,15 @@ export const riskCategoryLabels: Record<RiskCategory, string> = {
   OTHER: "Inne czynniki, w tym niebezpieczne",
 };
 
+// The form numbers the categories I–V.
+export const riskCategoryNumerals: Record<RiskCategory, string> = {
+  PHYSICAL: "I",
+  DUSTS: "II",
+  CHEMICAL: "III",
+  BIOLOGICAL: "IV",
+  OTHER: "V",
+};
+
 export const sexLabels: Record<Sex, string> = {
   FEMALE: "Kobieta",
   MALE: "Mężczyzna",
