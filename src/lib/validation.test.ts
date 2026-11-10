@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { isValidNip, isValidPostalCode, normalizeNip } from "./validation";
+import { isValidNip, isValidPesel, isValidPostalCode, normalizeNip } from "./validation";
 
 describe("NIP", () => {
   test("accepts the synthetic seed NIPs", () => {
@@ -37,5 +37,24 @@ describe("postal code", () => {
     expect(isValidPostalCode("50001")).toBe(false);
     expect(isValidPostalCode("5-0001")).toBe(false);
     expect(isValidPostalCode(" 50-001")).toBe(false);
+  });
+});
+
+describe("PESEL", () => {
+  test("accepts valid PESELs, including a check digit of 0", () => {
+    expect(isValidPesel("84051712374")).toBe(true);
+    expect(isValidPesel("44051401359")).toBe(true);
+    expect(isValidPesel("90010100030")).toBe(true);
+  });
+
+  test("rejects a wrong check digit", () => {
+    expect(isValidPesel("84051712375")).toBe(false);
+  });
+
+  test("rejects wrong length or non-digits", () => {
+    expect(isValidPesel("8405171237")).toBe(false);
+    expect(isValidPesel("840517123745")).toBe(false);
+    expect(isValidPesel("8405171237a")).toBe(false);
+    expect(isValidPesel("")).toBe(false);
   });
 });

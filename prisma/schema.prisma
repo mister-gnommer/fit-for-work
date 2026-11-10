@@ -14,8 +14,13 @@ enum Role {
   OPERATOR
 }
 
+enum Sex {
+  FEMALE
+  MALE
+}
+
 model Company {
-  id             String    @id @default(cuid())
+  id             String     @id @default(cuid())
   name           String
   city           String
   street         String?
@@ -23,13 +28,42 @@ model Company {
   flatNumber     String?
   postalCode     String
   nip            String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
   deletedAt      DateTime?
   users          User[]
+  employees      Employee[]
 
   @@unique([nip], where: raw("deletedAt IS NULL"))
   @@map("company")
+}
+
+model Employee {
+  id               String    @id @default(cuid())
+  companyId        String
+  company          Company   @relation(fields: [companyId], references: [id])
+  firstName        String
+  lastName         String
+  sex              Sex
+  pesel            String?
+  idDocumentName   String?
+  idDocumentNumber String?
+  /// yyyy-MM-dd; only set when there's no PESEL.
+  birthDate        String?
+  city             String
+  street           String?
+  buildingNumber   String
+  flatNumber       String?
+  position         String
+  workDescription  String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  // SQLite treats NULLs as distinct, so employees without a PESEL never collide.
+  @@unique([companyId, pesel], where: raw("deletedAt IS NULL"))
+  @@index([companyId])
+  @@map("employee")
 }
 
 // Better Auth core models (user, session, account, verification), with its field names.

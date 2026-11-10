@@ -25,7 +25,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </Link>
           <nav className="flex gap-4 text-sm">
             {isTelemedi && <Link href="/companies">Firmy</Link>}
-            {(!isTelemedi || selectedId) && <Link href="/users">Użytkownicy</Link>}
+            {(!isTelemedi || selectedId) && (
+              <>
+                <Link href="/employees">Pracownicy</Link>
+                <Link href="/users">Użytkownicy</Link>
+              </>
+            )}
           </nav>
           <div className="ml-auto flex items-center gap-4 text-sm">
             {isTelemedi && <CompanySwitcher companies={companies} selectedId={selectedId} />}
