@@ -114,6 +114,12 @@ Things the user decided not to build are in `docs/SCOPE-CUTS.md`.
   - category labels in `src/lib/labels.ts`
 
   Templates (change 5) reference factors by ID.
+- `create-referral` is implemented on branch `create-referral`, in parallel with `manage-referral-templates`, and without templates (they come in 6b, see `docs/notes.md`). It adds:
+  - the `Referral` model with a zod-checked snapshot
+  - the two-step form at `/referrals/new`
+  - the summary at `/referrals/[id]`
+  - the PDF download at `/referrals/[id]/pdf`
+  - exam type, employment status and referral status labels
 - The seven-change OpenSpec sequence and working approach are recorded in `docs/notes.md`.
 - Setup checks passed: locked install, lint/type checking, SQLite integration, Chromium smoke test, production build, container startup, migration failure and volume persistence. Initial container checks used Podman; the build, HTTP and Prisma/SQLite connection were then verified on Docker Engine. The demo runs on Docker Engine at http://localhost:3000; Podman is stopped. Seven moderate transitive lint-tooling audit findings remain.
 - Setup is archived at `openspec/changes/archive/20261110-setup-tech-stack/`; both capability specs are synced. Scope cuts have been reviewed.

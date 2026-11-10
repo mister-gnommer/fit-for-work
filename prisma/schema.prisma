@@ -28,6 +28,20 @@ enum Sex {
   MALE
 }
 
+enum ExamType {
+  PRE_EMPLOYMENT
+  PERIODIC
+  FOLLOW_UP
+}
+
+enum ReferralStatus {
+  CREATED
+  IN_PROGRESS
+  CONFIRMED
+  DONE
+  CANCELLED
+}
+
 model Company {
   id             String     @id @default(cuid())
   name           String
@@ -43,6 +57,7 @@ model Company {
   users          User[]
   riskFactors    RiskFactor[]
   employees      Employee[]
+  referrals      Referral[]
 
   @@unique([nip], where: raw("deletedAt IS NULL"))
   @@map("company")
@@ -88,11 +103,35 @@ model Employee {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   deletedAt        DateTime?
+  referrals        Referral[]
 
   // SQLite treats NULLs as distinct, so employees without a PESEL never collide.
   @@unique([companyId, pesel], where: raw("deletedAt IS NULL"))
   @@index([companyId])
   @@map("employee")
+}
+
+// Frozen when created: the PDF is rendered from `snapshot`. The columns are the ones we filter on.
+// Nothing is hard deleted, so the relations restrict deletes instead of cascading.
+model Referral {
+  id          String         @id @default(cuid())
+  companyId   String
+  company     Company        @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employeeId  String
+  employee    Employee       @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  createdById String
+  createdBy   User           @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  examType    ExamType
+  status      ReferralStatus @default(CREATED)
+  /// yyyy-MM-dd
+  deadline    String
+  snapshot    Json
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  @@index([companyId])
+  @@map("referral")
 }
 
 // Better Auth core models (user, session, account, verification), with its field names.
@@ -110,6 +149,7 @@ model User {
   deletedAt     DateTime?
   sessions      Session[]
   accounts      Account[]
+  referrals     Referral[]
 
   @@unique([companyId], where: raw("role = 'ADMIN' AND deletedAt IS NULL"))
   @@index([companyId])
